@@ -16,12 +16,18 @@ body {
   transition: margin-left var(--transition-time);
 }
   
+.content {
+  display: flex;
+  flex-direction: row;
+  min-height: 100dvh;
+}
+
 .sidebar {
   width: var(--sidebar-width);
   padding: 5px;
   background-color: var(--sidebar-bg);
-  position: fixed;
-  height: 100vh;
+  position: sticky;
+  height: 100dvh;
   overflow-x: hidden;
   transition: width var(--transition-time);
   z-index: 1000;
