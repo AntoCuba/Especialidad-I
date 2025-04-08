@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Huncho Store{% endblock %}</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="content">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <a href="#">
+                    <img src="{% static 'images/logohun.png' %}" alt="Huncho Store" class="logo">
+                </a>
+            </div>
+            <ul>
+                <li>
+                    <a href="#" class="toggle">Administración <i class="arrow"></i></a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'usuarios' %}">Usuarios</a></li>
+                        <li><a href="{% url 'historial_actividades' %}">Historial actividades</a></li>
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="toggle">Inventario <i class="arrow"></i></a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'productos' %}">Productos</a></li>
+        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="toggle">Proveedores <i class="arrow"></i></a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'listar_proveedores' %}">Listar proveedores</a></li>
+        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="toggle">Compra Productos <i class="arrow"></i></a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'realizar_compra' %}">Realizar Compra</a></li>
+        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="toggle">Ventas <i class="arrow"></i></a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'lista_clientes' %}">Clientes</a></li>
+                        <li><a href="{% url 'seguimiento_venta' %}">Seguimiento venta</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+        <main class="main">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+<script src="{% static 'js/sidebar.js' %}"></script>
+</html>
