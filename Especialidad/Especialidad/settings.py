@@ -56,7 +56,9 @@ ROOT_URLCONF = 'Especialidad.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'core/templates'],
+        'DIRS': [BASE_DIR / 'templates',  # Carpeta global
+                BASE_DIR / 'core' / 'templates',  # Carpeta de la app core
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
