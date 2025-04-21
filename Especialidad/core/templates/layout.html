@@ -15,11 +15,16 @@
 <body>
     <div class="content">
         <aside class="sidebar" id="sidebar">
-            <div class="logo-container">
-                <a href="#">
-                    <img src="{% static 'images/logohun.png' %}" alt="Huncho Store" class="logo">
+            <div class="logo-container" style="position: relative;">
+                <a href="#" style="display: block; margin-left: 0; position: relative; top: -10px; left: -10px;">
+                    <img src="{% static 'images/logohun.png' %}" alt="Huncho Store" class="logo" style="margin-left: 0;">
                 </a>
             </div>
+            <style>
+                .btn-logout {
+                    cursor: pointer;
+                }
+            </style>
             <ul>
                 <li>
                     <a href="#" class="toggle">Administración <i class="arrow"></i></a>
@@ -59,6 +64,12 @@
                     </ul>
                 </li>
             </ul>
+            <form method="post" action="{% url 'logout' %}" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-logout" style="background: none; border: none; padding: 0;">
+                    <img src="{% static 'images/log-out-outlined-svgrepo-com.svg' %}" alt="Cerrar sesión" style="width: 24px; height: 24px;">
+                </button>
+            </form>
         </aside>
         <main class="main">
             {% block content %}

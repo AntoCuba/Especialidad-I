@@ -1,0 +1,19 @@
+/* Eliminar viñetas de listas dentro del modal */
+#agregarUsuarioModal ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.table th, .table td {
+  padding: 0.5rem 0.75rem;  
+  vertical-align: middle;
+}
+
+.table thead th {
+  white-space: nowrap; 
+}
+
+.btn-sm {
+  min-width: 70px;  
+}
