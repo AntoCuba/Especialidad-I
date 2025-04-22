@@ -17,3 +17,44 @@
 .btn-sm {
   min-width: 70px;  
 }
+
+td form {
+  display: inline-block;
+  margin: 0 8px 0 0; 
+  padding: 0;
+  vertical-align: middle;
+}
+
+td form button,
+td a.btn-editar {
+  vertical-align: middle;
+  margin-right: 8px; 
+}
+
+td form button img,
+td a.btn-editar img {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+td > * {
+  font-size: 0;
+}
+
+td > * > img {
+  font-size: initial;
+}
+
+.search-container input#searchInput {
+  max-width: 600px;
+}
+
+.search-container button {
+  min-width: 100px;
+}
+
+.roboto-font {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 800;
+  font-size: 50px;
+}
