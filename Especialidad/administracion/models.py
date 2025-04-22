@@ -43,6 +43,7 @@ class Usuario(AbstractUser):
         (INVENTARIO, 'Inventario'),
     ]
 
+    first_name = models.CharField(max_length=50) 
     email = models.EmailField(max_length=50, unique=True)
     phone_number = models.CharField(max_length=12)
     position = models.CharField(max_length=15, choices=CARGO_CHOICES)
