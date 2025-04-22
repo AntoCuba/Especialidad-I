@@ -78,8 +78,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'Especialidad',
-        'USER': 'postgres',
-        'PASSWORD': 'shompy',
+        'USER': 'osses_benjamin',
+        'PASSWORD': '486412',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
@@ -123,6 +123,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "core/static",
+    BASE_DIR / "administracion/static",
 ]
 
 # Default primary key field type
@@ -131,3 +132,16 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'administracion.Usuario'
+
+LOGIN_REDIRECT_URL = '/administracion/usuarios/'
+LOGOUT_REDIRECT_URL = '/administracion/login/'
+
+# Email configuration
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
