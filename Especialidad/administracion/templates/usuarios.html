@@ -2,43 +2,173 @@
 {% load static %}
 {% block content %}
 
-<h1>Administración de Personal</h1>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
-    <!--<script src = //code.jquery.com/jquery-3.7.1.js></script>
-    <script src = //cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js></script>
-    <script src = //cdn.datatables.net/2.2.2/js/dataTables.js></script>
-    <script src = //cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js></script>
--->
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
+<h1 class="text-center mb-5 mt-4 roboto-font">Administración de Personal</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="{% static 'css/usuarios.css' %}" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
-    <!-- TABLA DE DATOS -->
-    <table id= "myTable" class="row-border">
+<div class="d-flex justify-content-between align-items-center mb-3 search-container">
+    <div class="d-flex justify-content-center flex-grow-1">
+<input type="text" id="searchInput" class="form-control w-75" placeholder="Buscar usuario...">
+    </div>
+    {% if user.is_superuser or user.position == "Administrador" %}
+    <div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarUsuarioModal">
+            Agregar
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="agregarUsuarioModal" tabindex="-1" aria-labelledby="agregarUsuarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formAgregarUsuario" method="post" action="{% url 'agregar_usuario' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="agregarUsuarioModalLabel">Agregar Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="agregarNombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="agregarNombre" name="first_name" maxlength="50" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios" required />
+          </div>
+          <div class="mb-3">
+            <label for="agregarEmail" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="agregarEmail" name="email" required />
+          </div>
+          <div class="mb-3">
+            <label for="agregarTelefono" class="form-label">Número de contacto</label>
+            <input type="text" class="form-control" id="agregarTelefono" name="phone_number" pattern="[0-9+]+" title="Solo números y el símbolo +" required />
+          </div>
+          <div class="mb-3">
+            <label for="agregarCargo" class="form-label">Cargo</label>
+            <select class="form-control" id="agregarCargo" name="position" required>
+              <option value="Administrador">Administrador</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Logistica">Logistica</option>
+              <option value="Inventario">Inventario</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="agregarPassword1" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="agregarPassword1" name="password1" required />
+          </div>
+          <div class="mb-3">
+            <label for="agregarPassword2" class="form-label">Confirmar contraseña</label>
+            <input type="password" class="form-control" id="agregarPassword2" name="password2" required />
+          </div>
+          <div id="formErrors" class="text-danger"></div>
+          <div id="formSuccess" class="text-success"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+  <div class="col-md-12 offset-md-1"></div>
+    <table id="myTable" class="table table-striped ">
         <thead>
             <tr>
-                <th data-label="Nombre Usuario">Usuario</th>
-                <th data-label="Correo">Correo</th>
-                <th data-label="Número de Contacto">Número de Contacto</th>
-                <th data-label="Cargo">Cargo</th>
-                <th data-label="Acciones">Acciones</th>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Número de Contacto</th>
+                <th>Cargo</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for usuario in usuarios %}
+            {% if not usuario.is_superuser or user.is_superuser or user.position == "Administrador" %}
             <tr>
-                <td data-label="Nombre Usuario">{{ usuario.first_name }}</td>
-                <td data-label="Correo">{{ usuario.email }}</td>
-                <td data-label="Número de Contacto">{{ usuario.phone_number }}</td>
-                <td data-label="Cargo">{{ usuario.position }}</td>
-                <td data-label="Acciones">
-                    <!-- SE PONEN LOS BOTONES DE ACCIONES -->
+                <td>{{ usuario.first_name }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.phone_number }}</td>
+                <td>{{ usuario.position }}</td>
+                <td>
+            {% if user.is_superuser or user.position == "Administrador" %}
+            <a href="#" class="btn-editar" data-id="{{ usuario.id }}" data-nombre="{{ usuario.first_name }}" data-email="{{ usuario.email }}" data-telefono="{{ usuario.phone_number }}" data-cargo="{{ usuario.position }}" style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
+            </a>
+            <form method="post" action="{% url 'eliminar_usuario' usuario.id %}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                </button>
+            </form>
+            {% else %}
+            <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar usuarios" type="button">
+                <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
+            </button>
+            <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar usuarios" type="button">
+                <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
+            </button>
+            {% endif %}
                 </td>
             </tr>
+            {% endif %}
             {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No hay usuarios disponibles.</td>
+            </tr>
             {% endfor %}
         </tbody>
-    </table>
+      </table>
+      </div>
+
+<div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formEditarUsuario" method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editarUsuarioId" name="user_id" />
+          <div class="mb-3">
+            <label for="editarNombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="editarNombre" name="first_name" maxlength="50" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios" required />
+          </div>
+          <div class="mb-3">
+            <label for="editarEmail" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="editarEmail" name="email" required />
+          </div>
+          <div class="mb-3">
+            <label for="editarTelefono" class="form-label">Número de contacto</label>
+            <input type="text" class="form-control" id="editarTelefono" name="phone_number" pattern="[0-9+]+" title="Solo números y el símbolo +" required />
+          </div>
+          <div class="mb-3">
+            <label for="editarCargo" class="form-label">Cargo</label>
+            <select class="form-control" id="editarCargo" name="position" required>
+              <option value="Administrador">Administrador</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Logistica">Logistica</option>
+              <option value="Inventario">Inventario</option>
+            </select>
+          </div>
+          <div id="formEditarErrors" class="text-danger"></div>
+          <div id="formEditarSuccess" class="text-success"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="{% static 'js/usuarios.js' %}"></script>
 
+{% endblock %}
