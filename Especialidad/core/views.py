@@ -3,7 +3,6 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'layout.html')
 
-
 def productos(request):
     return render(request, 'productos.html')
 
@@ -18,5 +17,7 @@ def lista_clientes(request):
 
 def seguimiento_venta(request):
     return render(request, 'seguimiento_venta.html')  
+
+
 
 # Create your views here.
