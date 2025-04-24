@@ -4,7 +4,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-<h1 class="text-center mb-5 mt-4 roboto-font">Administración de Personal</h1>
+<h1 class="text-start mb-5 mt-4 roboto-font">Administración de Personal</h1>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <link href="{% static 'css/usuarios.css' %}" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -75,7 +75,7 @@
 
 <div class="container-fluid mt-4">
   <div class="col-md-12 offset-md-1"></div>
-    <table id="myTable" class="table table-striped ">
+    <table id="myTable" class="table row-border" style="width: 100%">
         <thead>
             <tr>
                 <th>Usuario</th>
@@ -123,6 +123,7 @@
         </tbody>
       </table>
       </div>
+
 
 <div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
   <div class="modal-dialog">

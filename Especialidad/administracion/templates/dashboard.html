@@ -1,0 +1,159 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .container {
+      padding: 20px;
+    }
+    h1 {
+      font-size: 32px;
+    }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .ventas {
+      flex: 2;
+    }
+    .stats {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .stat-box {
+      text-align: center;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px #ccc;
+    }
+    .stat-box h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+    .stat-box p {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+    .acciones {
+      display: flex;
+      gap: 10px;
+    }
+    .acciones i {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboards</h1>
+    <div class="dashboard">
+      <div class="card ventas">
+        <h2>VENTAS TOTALES</h2>
+        <canvas id="ventasChart"></canvas>
+      </div>
+      <div class="stats">
+        <div class="stat-box">
+          <h3>PEDIDOS PENDIENTES</h3>
+          <!--Aún no hay datos-->
+          <p> 0 </p>
+        </div>
+        <div class="stat-box">
+          <h3>USUARIOS ACTIVOS</h3>
+          <!--Aún no hay datos-->
+          <p> 0 </p>
+        </div>
+        <div class="stat-box">
+          <h3>PRODUCTOS EN STOCK</h3>
+          <!--Aún no hay datos-->
+          <p> 0 </p>
+        </div>
+      </div>
+    </div>
+
+    <!--Tabla de productos con bajo stock-->
+    <div class="card" style="margin-top: 30px;">
+      <h2>Productos con Baja Existencia</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre Producto</th>
+            <th>Cantidad Stock</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+        <!-- Cuando tengamos hecho el modulo de inventario y la funcion de stock bajo creado se 
+        enlazan aqui los productos que deben aparecer-->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!--Ejemplo de gráfico, aún no se reciben datos, ya que no tenemos el modulo de ventas creado-->
+  <script>
+    const ctx = document.getElementById('ventasChart').getContext('2d');
+    const ventasChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct'],
+        datasets: [{
+          label: 'Ventas',
+          data: [100, 90, 78, 68, 58, 49, 45, 35, 27, 15],
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 0, 0, 0.1)',
+          tension: 0.3,
+          pointRadius: 5,
+          fill: true
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
+{% endblock %}
