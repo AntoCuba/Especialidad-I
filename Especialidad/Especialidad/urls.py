@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('administracion/', include('administracion.urls')),
     path('', CustomLoginView.as_view(), name='login'),
-    path('inventario/', productos, name='productos'),
+    path('productos/', productos, name='productos'),
     path('proveedores/', listar_proveedores, name='listar_proveedores'),
     path('compra/', realizar_compra, name='realizar_compra'),
     path('ventas/clientes/', lista_clientes, name='lista_clientes'),
