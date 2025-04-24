@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% load static %}
+<!--referencias -->
+<link href="{% static 'vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<script src="{% static 'vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<link href="{% static 'vendors/fontawesome/css/all.min.css' %}" rel="stylesheet">
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<link href="{% static 'css/historial.css' %}" rel="stylesheet">
+
+<div class="container-fluid px-4">
+    <h1 class="titulo-historial mb-4">Historial de Actividades</h1>
+    <button class="btn btn-primary">Botón de prueba, no pescar</button>
+    <i class="fas fa-check-circle text-success"></i>
+
+    <!--texto superior -->
+    <div class="timeline-label-top">
+        <span>Más Reciente</span>
+    </div>
+
+    <div class="timeline-wrapper">
+        <!--linea de tiempo-->
+        <div class="timeline-static-elements">
+            <div class="timeline-line"></div>
+            <div class="timeline-start"></div>
+            <div class="timeline-end"></div>
+        </div>
+
+        <!--contenido-->
+        <div class="timeline-scroll-container">
+            <!--ejemplos (reemplazar depues) -->
+            <div class="timeline-item">
+                <div class="timeline-icon add">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-date">26 Marzo - 14:32</div>
+                    <div class="timeline-user">Antonia Cuba</div>
+                    <div class="timeline-action">Agregó un Producto</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-icon edit">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-date">24 Marzo - 18:49</div>
+                    <div class="timeline-user">Benjamin Osses</div>
+                    <div class="timeline-action">Editó un Producto</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--texto inferior -->
+    <div class="timeline-label-bottom">
+        <span>Más Antiguo</span>
+    </div>
+</div>
+{% endblock %}
