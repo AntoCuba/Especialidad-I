@@ -1,21 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Usuario
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserCreationForm, CustomUserChangeForm
-from django.shortcuts import get_object_or_404, redirect, render
-
-from django.http import HttpResponseForbidden
+from .forms import CustomUserCreationForm, CustomUserChangeForm, EmailAuthenticationForm
+from django.http import JsonResponse, HttpResponseForbidden
+from django.db import models
+from inventario.models import Producto
 
 @login_required
 def usuario_view(request):
     usuarios = Usuario.objects.all()
     form = CustomUserCreationForm()
     return render(request, 'usuarios.html', {'usuarios': usuarios, 'form': form} )
-
-from django.http import JsonResponse
 
 @login_required
 def agregar_usuario(request):
@@ -86,10 +83,15 @@ def historial_actividades(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
-
-
-from .forms import EmailAuthenticationForm
+    total_stock = Producto.objects.filter(cantidad__isnull=False).aggregate(total=models.Sum('cantidad'))['total'] or 0
+    users_activos = Usuario.objects.filter(is_active=True).count()
+    productos_bajo_stock = Producto.objects.filter(cantidad__lt=3, cantidad__isnull=False)
+    context = {
+        'total_stock': total_stock,
+        'users_activos': users_activos,
+        'productos_bajo_stock': productos_bajo_stock,
+    }
+    return render(request, 'dashboard.html', context)
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'

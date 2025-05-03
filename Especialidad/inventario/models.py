@@ -13,3 +13,6 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre_producto
+
+    def sin_stock(self):
+        return not self.cantidad or self.cantidad == 0 #Devuelve true si el stock es 0 y false en caso contrario.

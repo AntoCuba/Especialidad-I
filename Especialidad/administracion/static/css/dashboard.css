@@ -1,0 +1,92 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f5f5f5;
+}
+.container {
+  padding: 20px;
+}
+h1 {
+  font-size: 32px;
+}
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #ccc;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.ventas {
+  flex: 2;
+}
+.stats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.stat-box {
+  text-align: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px #ccc;
+}
+.stat-box h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.stat-box p {
+  font-size: 24px;
+  font-weight: bold;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.dashboard-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dashboard-buttons a,
+.dashboard-buttons button,
+.dashboard-buttons form {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-right: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+}
+
+.dashboard-buttons button {
+  margin: 0;
+}
+
+.dashboard-buttons img {
+  object-fit: contain;
+}
+
+.dashboard-buttons .disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
