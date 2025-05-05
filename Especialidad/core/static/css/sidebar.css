@@ -28,6 +28,7 @@ body {
   background-color: var(--sidebar-bg);
   position: sticky;
   height: 100dvh;
+  top: 0;
   overflow-x: hidden;
   transition: width var(--transition-time);
   z-index: 1000;
