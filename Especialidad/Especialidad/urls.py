@@ -19,6 +19,7 @@ from django.urls import path, include
 from core.views import listar_proveedores, realizar_compra, lista_clientes, seguimiento_venta
 from inventario.views import productos, agregar_producto, editar_producto, eliminar_producto
 from administracion.views import CustomLoginView
+from proveedores.views import agregar_proveedor, editar_proveedor, eliminar_proveedor
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -31,6 +32,9 @@ urlpatterns = [
     path('inventario/editar/<int:producto_id>/', editar_producto, name='editar_producto'),
     path('inventario/eliminar/<int:producto_id>/', eliminar_producto, name='eliminar_producto'),
     path('proveedores/', listar_proveedores, name='listar_proveedores'),
+    path('proveedores/agregar/', agregar_proveedor, name='agregar_proveedor'),
+    path('proveedores/editar/<int:proveedor_id>/', editar_proveedor, name='editar_proveedor'),
+    path('proveedores/eliminar/<int:proveedor_id>/', eliminar_proveedor, name='eliminar_proveedor'),
     path('compra/', realizar_compra, name='realizar_compra'),
     path('ventas/clientes/', lista_clientes, name='lista_clientes'),
     path('ventas/seguimiento/', seguimiento_venta, name='seguimiento_venta'),

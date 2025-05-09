@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'administracion',
-    'inventario'
+    'inventario',
+    'proveedores'
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,4 @@ LOGOUT_REDIRECT_URL = '/administracion/login/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'inventario' / 'media'
+MEDIA_ROOT = BASE_DIR / 'listar_proveedores' / 'media'

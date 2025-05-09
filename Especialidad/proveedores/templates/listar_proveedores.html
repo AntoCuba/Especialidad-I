@@ -1,0 +1,230 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+<h1 class="text-start mb-5 mt-4 roboto-font">Proveedores</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="{% static 'css/proveedores.css' %}" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+<div class="d-flex justify-content-between align-items-start mb-3 search-container">
+    <div class="d-flex justify-content-start flex-grow-1">
+        <input type="text" id="searchInput" class="form-control w-75" placeholder="Buscar proveedor...">
+    </div>
+    {% if user.is_superuser or user.position == "Administrador" %}
+    <div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProveedorModal">
+            Agregar
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="agregarProveedorModal" tabindex="-1" aria-labelledby="agregarProveedorModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="formAgregarProveedor" method="post" action="{% url 'agregar_proveedor' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="agregarproveedorModalLabel">Agregar Proveedor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="agregarNombreproveedor" class="form-label">Nombre proveedor</label>
+                <input type="text" class="form-control" id="agregarNombreProveedor" name="nombre_proveedor" maxlength="100" required />
+              </div>
+                <label for="agregarMarcasPrincipales" class="form-label">Marcas Principales</label>
+                <input type="text" class="form-control" id="agregarMarcasPrincipales" name="marcas_principales" />
+              <div class="mb-3">
+                <label for="agregarMetodoPago" class="form-label">Metodo de Pago</label>
+                <input type="text" class="form-control" id="agregarMetodoPago" name="metodo_pago" maxlength="100" />
+              </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="agregarTiempoEnvio" class="form-label">Tiempo de Envio</label>
+                <input type="text" class="form-control" id="agregarTiempoEnvio" name="tiempo_envio" maxlength="50" />
+              </div>
+                <label for="agregarDescripcion" class="form-label">Descripcion</label>
+                <input type="text" class="form-control" id="agregarDescripcion" name="descripcion" maxlength="200" />
+              <div class="mb-3">
+              </div>
+            </div>
+          </div>
+          <div id="formErrors" class="text-danger"></div>
+          <div id="formSuccess" class="text-success"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive">
+        <table id="myTable" class="table row-border">
+            <thead>
+              <tr>
+                <th>Nombre proveedor</th>
+                <th>Productos</th>
+                <th>Autenticación</th>
+                <th>Tiempo envío</th>
+                <th>Acciones</th>
+              </tr>
+          </thead>
+    <tbody>
+        {% for proveedor in listar_proveedores %}
+        <tr>
+            <td>{{ proveedor.nombre_proveedor }}</td>
+            <td>${{ proveedor.tipo_productos }}</td>
+            <td>${{ proveedor.autenticacion }}</td>
+            <td>{{ proveedor.tiempo_envio }}</td>
+            <td>
+            {% if user.is_superuser or user.position == "Administrador" %}
+
+<a href="#" class="btn-ver-proveedor" data-bs-toggle="modal" data-bs-target="#verProveedorModal"
+                data-id="{{ proveedor.id }}"
+                data-nombre="{{ proveedor.nombre_proveedor }}"
+                data-marcasprincipales="{{ proveedor.marcas_principales }}"
+                data-metododepago="{{ proveedor.metodo_pago }}"
+                data-tiempoenvio="{{ proveedor.tiempo_envio }}"
+                data-descripcion="{{ proveedor.descripcion }}"
+                style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver proveedor" style="height: 20px; width: 20px;">
+            </a>
+<a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarProveedorModal" data-id="{{ proveedor.id }}" data-nombre="{{ proveedor.nombre_proveedor }}" data-marcasprincipales=""="{{ proveedor.marcas_principales}}" data-metododepago=""="{{ proveedor.metodo_pago|default:'' }}" data-tiempoenvio=""="{{ proveedor.tiempo_envio }}"  data-descripcion=""="{{ proveedor.descripcion }}"style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
+            </a>
+            <form method="post" action="{% url 'eliminar_proveedor' proveedor.id %}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este proveedor?');">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                </button>
+            </form>
+            {% else %}
+            <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar proveedores" type="button">
+                <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
+            </button>
+            <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar proveedores" type="button">
+                <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
+            </button>
+            {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">No hay proveedores disponibles.</td>
+        </tr>
+        {% endfor %}
+</tbody>
+  </table>
+  </div>
+    </div>
+      </div>
+        </div>
+          </div>
+
+<div class="modal fade" id="verProveedorModal" tabindex="-1" aria-labelledby="verProveedorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verProveedorModalLabel">Detalles del Proveedor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formVerproveedor">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="verNombreproveedor" class="form-label">Nombre proveedor</label>
+                <input type="text" class="form-control" id="verNombreproveedor" name="nombre_proveedor" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verMarcasPrincipales" class="form-label">Marcas Principales</label>
+                <input type="text" class="form-control" id="verMarcasPrincipales" name="marcas_principales" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verMetodoPago" class="form-label">Metodo de Pago</label>
+                <input type="text" class="form-control" id="verMetodoPago" name="metodo_pago" readonly />
+              </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="verTiempoEnvio" class="form-label">Tiempo de Envío</label>
+                <input type="text" class="form-control" id="verTiempoEnvio" name="tiempo_envio" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verDescripcion" class="form-label">Descripcion</label>
+                <input type="text" class="form-control" id="verDescripcion" name="descripcion" readonly />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editarProveedorModal" tabindex="-1" aria-labelledby="editarProveedorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="formEditarProveedor" method="post" enctype="multipart/form-data" action="/proveedores/editar/0/">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarProveedorModalLabel">Editar proveedor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editarproveedorId" name="proveedor_id" />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarNombreProveedor" class="form-label">Nombre proveedor</label>
+                <input type="text" class="form-control" id="editarNombreProveedor" name="nombre_proveedor" maxlength="100" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarMarcasPrincipales" class="form-label">Marcas Principales</label>
+                <input type="text" class="form-control" id="editarMarcasPrincipales" name="marcas_principales" />
+              </div>
+              <div class="mb-3">
+                <label for="editarMetodoPago" class="form-label">Metodo de Pago</label>
+                <input type="text" class="form-control" id="editarMetodoPago" name="metodo_pago" maxlength="100" />
+              </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarTiempoEnvio" class="form-label">Tiempo de Envío</label>
+                <input type="text" class="form-control" id="editarTiempoEnvio" name="tiempo_envio" maxlength="50" />
+              </div>
+              <div class="mb-3">
+                <label for="editarDescripcion" class="form-label">Descripcion</label>
+                <input type="text" class="form-control" id="editarDescripcion" name="descripcion" maxlength="200" />
+              </div>
+            </div>
+          </div>
+          <div id="formEditarErrors" class="text-danger"></div>
+          <div id="formEditarSuccess" class="text-success"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="{% static 'js/proveedors.js' %}"></script>
+
+{% endblock %}
