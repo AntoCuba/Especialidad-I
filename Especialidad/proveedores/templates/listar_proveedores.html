@@ -1,0 +1,268 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<h1 class="text-start mb-5 mt-4 roboto-font">Proveedores</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="{% static 'css/proveedores.css' %}" rel="stylesheet" />
+
+<div class="d-flex justify-content-between align-items-start mb-3 search-container">
+    <div class="d-flex justify-content-start flex-grow-1">
+        <input type="text" id="searchInput" class="form-control w-75" placeholder="Buscar proveedor...">
+    </div>
+    {% if user.is_superuser or user.position == "Administrador" %}
+    <div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProveedorModal">
+            Agregar
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="agregarProveedorModal" tabindex="-1" aria-labelledby="agregarProveedorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="formAgregarProveedor" method="post" action="{% url 'agregar_proveedor' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="agregarProveedorModalLabel">Agregar Proveedor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="agregarNombreProveedor" class="form-label">Nombre proveedor</label>
+                <input type="text" class="form-control" id="agregarNombreProveedor" name="nombre" required>
+              </div>
+              <div class="mb-3">
+                <label for="agregarProductoProveedor" class="form-label">Producto</label>
+                <input type="text" class="form-control" id="agregarProductoProveedor" name="producto" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="agregarAutenticacionProveedor" name="autenticacion">
+                <label class="form-check-label" for="agregarAutenticacionProveedor">Autenticación</label>
+              </div>
+              <div class="mb-3">
+                <label for="agregarTiempoEnvioProveedor" class="form-label">Tiempo de Envío</label>
+                <input type="text" class="form-control" id="agregarTiempoEnvioProveedor" name="tiempo_envio" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive">
+        <table id="myTable" class="table row-border">
+            <thead>
+              <tr>
+                <th>Nombre proveedor</th>
+                <th>Producto</th>
+                <th>Autenticación</th>
+                <th>Tiempo de Envío</th>
+                <th>Acciones</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for proveedor in proveedores %}
+            <tr>
+                <td>{{ proveedor.nombre }}</td>
+                <td>{{ proveedor.producto }}</td>
+                <td>{% if proveedor.autenticacion %}Sí{% else %}No{% endif %}</td>
+                <td>{{ proveedor.tiempo_envio }}</td>
+                <td>
+                {% if user.is_superuser or user.position == "Administrador" %}
+                <a href="#" class="btn-ver-proveedor" data-bs-toggle="modal" data-bs-target="#verProveedorModal"
+                    data-id="{{ proveedor.id }}"
+                    data-nombre="{{ proveedor.nombre }}"
+                    data-producto="{{ proveedor.producto }}"
+                    data-autenticacion="{% if proveedor.autenticacion %}Sí{% else %}No{% endif %}"
+                    data-tiempo-envio="{{ proveedor.tiempo_envio }}"
+                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver proveedor" style="height: 20px; width: 20px;">
+                </a>
+                <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarProveedorModal" 
+                    data-id="{{ proveedor.id }}"
+                    data-nombre="{{ proveedor.nombre }}"
+                    data-producto="{{ proveedor.producto }}"
+                    data-autenticacion="{{ proveedor.autenticacion|yesno:'true,false' }}"
+                    data-tiempo-envio="{{ proveedor.tiempo_envio }}"
+                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
+                </a>
+                <form method="post" action="{% url 'eliminar_proveedor' proveedor.id %}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este proveedor?');">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                        <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                    </button>
+                </form>
+                {% else %}
+                <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar" type="button">
+                    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
+                </button>
+                <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar" type="button">
+                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
+                </button>
+                {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No hay proveedores disponibles.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="verProveedorModal" tabindex="-1" aria-labelledby="verProveedorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verProveedorModalLabel">Detalles del Proveedor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formVerProveedor">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="verNombreProveedor" class="form-label">Nombre proveedor</label>
+                <input type="text" class="form-control" id="verNombreProveedor" name="nombre" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verProductoProveedor" class="form-label">Producto</label>
+                <input type="text" class="form-control" id="verProductoProveedor" name="producto" readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="verAutenticacionProveedor" class="form-label">Autenticación</label>
+                <input type="text" class="form-control" id="verAutenticacionProveedor" name="autenticacion" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verTiempoEnvioProveedor" class="form-label">Tiempo de Envío</label>
+                <input type="text" class="form-control" id="verTiempoEnvioProveedor" name="tiempo_envio" readonly />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editarProveedorModal" tabindex="-1" aria-labelledby="editarProveedorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="formEditarProveedor" method="post" action="/proveedores/editar/0/">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarProveedorModalLabel">Editar Proveedor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editarProveedorId" name="proveedor_id" />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarNombreProveedor" class="form-label">Nombre proveedor</label>
+                <input type="text" class="form-control" id="editarNombreProveedor" name="nombre" maxlength="100" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarProductoProveedor" class="form-label">Producto</label>
+                <input type="text" class="form-control" id="editarProductoProveedor" name="producto" maxlength="100" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="editarAutenticacionProveedor" name="autenticacion">
+                <label class="form-check-label" for="editarAutenticacionProveedor">Autenticación</label>
+              </div>
+              <div class="mb-3">
+                <label for="editarTiempoEnvioProveedor" class="form-label">Tiempo de Envío</label>
+                <input type="text" class="form-control" id="editarTiempoEnvioProveedor" name="tiempo_envio" maxlength="50" required />
+              </div>
+            </div>
+          </div>
+          <div id="formEditarProveedorErrors" class="text-danger"></div>
+          <div id="formEditarProveedorSuccess" class="text-success"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="{% static 'js/proveedores.js' %}"></script>
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}  {# Conserva los scripts del template base #}
+<script>
+$(document).ready(function() {
+  function cargarModalVerProveedor(proveedor) {
+    $('#verNombreProveedor').val(proveedor.nombre);
+    $('#verProductoProveedor').val(proveedor.producto);
+    $('#verAutenticacionProveedor').val(proveedor.autenticacion ? 'Sí' : 'No');
+    $('#verTiempoEnvioProveedor').val(proveedor.tiempo_envio);
+    $('#verProveedorModal').modal('show');
+  }
+
+  function cargarModalEditarProveedor(proveedor) {
+    $('#editarProveedorId').val(proveedor.id);
+    $('#editarNombreProveedor').val(proveedor.nombre);
+    $('#editarProductoProveedor').val(proveedor.producto);
+    $('#editarAutenticacionProveedor').prop('checked', proveedor.autenticacion);
+    $('#editarTiempoEnvioProveedor').val(proveedor.tiempo_envio);
+    $('#editarProveedorModal').modal('show');
+  }
+
+  $(document).on('click', '.btn-ver-proveedor', function() {
+    const proveedorData = $(this).data();
+    cargarModalVerProveedor({
+      id: proveedorData.id,
+      nombre: proveedorData.nombre,
+      producto: proveedorData.producto,
+      autenticacion: proveedorData.autenticacion === 'true',
+      tiempo_envio: proveedorData.tiempo_envio
+    });
+  });
+
+  $(document).on('click', '.btn-editar-proveedor', function() {
+    const proveedorData = $(this).data();
+    cargarModalEditarProveedor({
+      id: proveedorData.id,
+      nombre: proveedorData.nombre,
+      producto: proveedorData.producto,
+      autenticacion: proveedorData.autenticacion === 'true',
+      tiempo_envio: proveedorData.tiempo_envio
+    });
+  });
+});
+</script>
+{% endblock %}

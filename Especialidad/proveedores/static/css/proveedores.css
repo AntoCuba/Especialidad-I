@@ -1,0 +1,41 @@
+
+td form {
+  display: inline-block;
+  margin: 0 8px 0 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
+td form button,
+td a.btn-editar-proveedor,
+td a.btn-ver-proveedor {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+td form button img,
+td a.btn-editar-proveedor img,
+td a.btn-ver-proveedor img {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+td > * {
+  font-size: 0;
+}
+
+td > * > img {
+  font-size: initial;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.modal-xl {
+  max-width: 1140px;
+}
