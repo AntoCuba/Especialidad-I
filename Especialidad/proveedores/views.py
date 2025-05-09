@@ -11,35 +11,33 @@ def listar_proveedores(request):
 @csrf_exempt
 def agregar_proveedor(request):
     if request.method == 'POST':
-        nombre_proveedor = request.POST.get('nombre_proveedor')
-        marcas_principales = request.POST.get('marcas_principales')
-        metodo_pago= request.POST.get('metodo_pago')
+        nombre = request.POST.get('nombre')
+        producto = request.POST.get('producto')
+        autenticacion = request.POST.get('autenticacion', 'off') == 'on'  
         tiempo_envio = request.POST.get('tiempo_envio')
-        descripcion = request.POST.get('descripcion')
 
         Proveedor.objects.create(
-            nombre_proveedor=nombre_proveedor,
-            marcas_principales=marcas_principales,
-            metodo_pago=metodo_pago,
-            tiempo_envio=tiempo_envio,
-            descripcion=descripcion,
+            nombre=nombre,
+            producto=producto,
+            autenticacion=autenticacion,
+            tiempo_envio=tiempo_envio
         )
         return HttpResponseRedirect(reverse('listar_proveedores'))
 
 @csrf_exempt
 def editar_proveedor(request, proveedor_id):
-    proveedor = get_object_or_404(proveedor, id=proveedor_id)
+    proveedor = get_object_or_404(Proveedor, id=proveedor_id)
     if request.method == 'POST':
-        proveedor.nombre_proveedor = request.POST.get('nombre_proveedor')
-        proveedor.marcas_principales = request.POST.get('marcas_principales')
-        proveedor.metodo_pago= request.POST.get('metodo_pago')
+        proveedor.nombre = request.POST.get('nombre')
+        proveedor.producto = request.POST.get('producto')
+        proveedor.autenticacion = request.POST.get('autenticacion', 'off') == 'on'
         proveedor.tiempo_envio = request.POST.get('tiempo_envio')
-        proveedor.descripcion = request.POST.get('descripcion')
-        return HttpResponseRedirect(reverse('proveedores'))
+        proveedor.save()
+        return HttpResponseRedirect(reverse('listar_proveedores'))
 
 @csrf_exempt
 def eliminar_proveedor(request, proveedor_id):
-    proveedor = get_object_or_404(proveedor, id=proveedor_id)
+    proveedor = get_object_or_404(Proveedor, id=proveedor_id)
     if request.method == 'POST':
         proveedor.delete()
-        return HttpResponseRedirect(reverse('proveedores'))
+        return HttpResponseRedirect(reverse('listar_proveedores'))
