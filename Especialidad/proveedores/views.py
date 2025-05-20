@@ -1,12 +1,14 @@
+from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Proveedor
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+# Create your views here.
 def listar_proveedores(request):
-    listar_proveedores = Proveedor.objects.all()
-    return render(request, 'listar_proveedores.html', {'listar_proveedores': listar_proveedores})
+    proveedores = Proveedor.objects.all()
+    return render(request, 'listar_proveedores.html', {'proveedores': proveedores})
 
 @csrf_exempt
 def agregar_proveedor(request):
