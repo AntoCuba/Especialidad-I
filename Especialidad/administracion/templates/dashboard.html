@@ -43,55 +43,57 @@
         <thead>
           <tr>
             <th>Nombre Producto</th>
+            <th>Talla</th>
             <th>Cantidad Stock</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody>
-        {% for producto in productos_bajo_stock %}
-          <tr>
-            <td>{{ producto.nombre_producto }}</td>
-            <td>{{ producto.cantidad }}</td>
+          <tbody>
+          {% for producto in productos_bajo_stock %}
+            <tr>
+              <td>{{ producto.producto.nombre_producto }}</td>
+              <td>{{ producto.talla }}</td>
+              <td>{{ producto.cantidad }}</td>
               <td>
-              {% if user.is_superuser or user.position == "Administrador" %}
-              <div class="dashboard-buttons">
-              <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarProductoModal"
-                 data-id="{{ producto.id }}"
-                 data-nombre="{{ producto.nombre_producto }}"
-                 data-valorproductounidad="{{ producto.valor_producto_unidad|default:'' }}"
-                 data-precioventa="{{ producto.precio_venta|default:'' }}"
-                 data-talla="{{ producto.talla }}"
-                 data-numeroorden="{{ producto.numero_orden }}"
-                 data-numerotracking="{{ producto.numero_tracking }}"
-                 data-proveedor="{{ producto.proveedor }}"
-                 data-cantidad="{{ producto.cantidad }}"
-                 data-boleta_factura="{% if producto.boleta_factura %}{{ producto.boleta_factura.url }}{% else %}{% endif %}"
-                 class="btn-editar" style="color: inherit; cursor: pointer; background: none; border: none; padding: 0;">
-                <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
-              </a>
-              <form method="post" action="{% url 'eliminar_producto' producto.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-eliminar" style="background: none; border: none; padding: 0; cursor: pointer;">
-                  <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                {% if user.is_superuser or user.position == "Administrador" %}
+                <div class="dashboard-buttons">
+                <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarProductoModal"
+                   data-id="{{ producto.producto.id }}"
+                   data-nombre="{{ producto.producto.nombre_producto }}"
+                   data-valorproductounidad="{{ producto.producto.valor_producto_unidad|default:'' }}"
+                   data-precioventa="{{ producto.producto.precio_venta|default:'' }}"
+                   data-talla="{{ producto.talla }}"
+                   data-numeroorden="{{ producto.producto.numero_orden }}"
+                   data-numerotracking="{{ producto.producto.numero_tracking }}"
+                   data-proveedor="{{ producto.producto.proveedor }}"
+                   data-cantidad="{{ producto.cantidad }}"
+                   data-boleta_factura="{% if producto.producto.boleta_factura %}{{ producto.producto.boleta_factura.url }}{% else %}{% endif %}"
+                   class="btn-editar" style="color: inherit; cursor: pointer; background: none; border: none; padding: 0;">
+                  <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
+                </a>
+                <form method="post" action="{% url 'eliminar_producto' producto.producto.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-eliminar" style="background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                  </button>
+                </form>
+                </div>
+                {% else %}
+                <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar productos" type="button">
+                  <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
                 </button>
-              </form>
-              </div>
-              {% else %}
-              <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar productos" type="button">
-                <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
-              </button>
-              <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar productos" type="button">
-                <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
-              </button>
-              {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="3">No hay productos con baja existencia.</td>
-          </tr>
-        {% endfor %}
-        </tbody>
+                <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar productos" type="button">
+                  <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
+                </button>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="3">No hay productos con baja existencia.</td>
+            </tr>
+          {% endfor %}
+          </tbody>
       </table>
     </div>
   </div>

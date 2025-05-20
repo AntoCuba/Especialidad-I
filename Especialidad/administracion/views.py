@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomUserChangeForm, EmailAuthenticationForm
 from django.http import JsonResponse, HttpResponseForbidden
 from django.db import models
-from inventario.models import Producto
+from inventario.models import Producto, ProductoTalla
+from django.db.models import Sum, F, Q
 
 @login_required
 def usuario_view(request):
@@ -83,9 +84,13 @@ def historial_actividades(request):
 
 @login_required
 def dashboard(request):
-    total_stock = Producto.objects.filter(cantidad__isnull=False).aggregate(total=models.Sum('cantidad'))['total'] or 0
+    total_stock = Producto.objects.annotate(
+        total_cantidad=Sum('productotalla__cantidad')
+    ).aggregate(total=Sum('total_cantidad'))['total'] or 0
+
     users_activos = Usuario.objects.filter(is_active=True).count()
-    productos_bajo_stock = Producto.objects.filter(cantidad__lt=3, cantidad__isnull=False)
+    productos_bajo_stock = ProductoTalla.objects.filter(cantidad__lt=3).select_related('producto')
+
     context = {
         'total_stock': total_stock,
         'users_activos': users_activos,

@@ -1,28 +1,93 @@
-td form {
-  display: inline-block;
-  margin: 0 8px 0 0;
-  padding: 0;
-  vertical-align: middle;
+.tallas-cantidades-list ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+    display: inline; 
 }
 
-td form button,
-td a.btn-editar,
-td a.btn-ver-producto {
-  vertical-align: middle;
-  margin-right: 8px;
+.tallas-cantidades-list ul li {
+    display: inline;
+    padding: 0;
+    border: none;
+    margin-right: 8px;
+    background-color: transparent;
+    font-size: 1rem;
 }
 
-td form button img,
-td a.btn-editar img,
-td a.btn-ver-producto img {
-  vertical-align: middle;
-  display: inline-block;
+td > a, td > form > button {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 4px 0 0 !important;
+    background: none !important;
+    box-shadow: none !important;
 }
 
-td > * {
-  font-size: 0;
+td > a img, td > form > button img {
+    vertical-align: middle;
 }
 
-td > * > img {
-  font-size: initial;
+.tallas-cantidades-list table tr.last-size td {
+    border-bottom: none !important;
+}
+
+.tallas-cantidades-list table tr td {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tallas-cantidades-list table {
+    border: none !important;
+    border-spacing: 0 !important;
+}
+
+.tallas-cantidades-list table tr td {
+    padding: 4px 20px !important; 
+    margin: 0 !important;
+    white-space: nowrap;
+    vertical-align: bottom !important;
+}
+
+td:last-child {
+    display: flex !important;
+    gap: 5px !important; 
+    align-items: center;
+}
+
+td:last-child > * {
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Eliminar spin buttons defaults de los navegadores. */
+#agregarValorProductoUnidad::-webkit-outer-spin-button,
+#agregarValorProductoUnidad::-webkit-inner-spin-button,
+#agregarPrecioVenta::-webkit-outer-spin-button,
+#agregarPrecioVenta::-webkit-inner-spin-button,
+#editarValorProductoUnidad::-webkit-outer-spin-button,
+#editarValorProductoUnidad::-webkit-inner-spin-button,
+#editarPrecioVenta::-webkit-outer-spin-button,
+#editarPrecioVenta::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#agregarValorProductoUnidad,
+#agregarPrecioVenta,
+#editarValorProductoUnidad,
+#editarPrecioVenta {
+    -moz-appearance: textfield;
+}
+
+#tallasContainer input[type=number]::-webkit-outer-spin-button,
+#tallasContainer input[type=number]::-webkit-inner-spin-button,
+#editarTallasContainer input[type=number]::-webkit-outer-spin-button,
+#editarTallasContainer input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#tallasContainer input[type=number],
+#editarTallasContainer input[type=number] {
+    -moz-appearance: textfield;
 }
