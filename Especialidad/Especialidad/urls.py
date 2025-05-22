@@ -49,8 +49,10 @@ urlpatterns = [
     path('proveedores/editar/<int:proveedor_id>/', editar_proveedor, name='editar_proveedor'),
     path('proveedores/eliminar/<int:proveedor_id>/', eliminar_proveedor, name='eliminar_proveedor'),
 
-    #Ventas
+    #Compra
     path('compra/', realizar_compra, name='realizar_compra'),
+
+    #Venta
     path('ventas/clientes/', lista_clientes, name='lista_clientes'),
     path('ventas/seguimiento/', seguimiento_venta, name='seguimiento_venta'),
 ]
