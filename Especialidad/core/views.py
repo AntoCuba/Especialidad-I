@@ -12,8 +12,8 @@ def listar_proveedores(request):
 def realizar_compra(request):
     return render(request, 'realizar_compra.html')  
 
-def lista_clientes(request):
-    return render(request, 'lista_clientes.html')  
+def listar_ventas(request):
+    return render(request, 'ventas.html')  
 
 def seguimiento_venta(request):
     return render(request, 'seguimiento_venta.html')  

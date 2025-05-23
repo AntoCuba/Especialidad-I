@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'administracion',
     'inventario',
     'proveedores',
-    'compra',
+    'ventas',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'Especialidad',
         'USER': 'postgres',
-        'PASSWORD': 'shompy',
+        'PASSWORD': '12345',
         'HOST': 'localhost',
         'PORT': '5432',
     }
