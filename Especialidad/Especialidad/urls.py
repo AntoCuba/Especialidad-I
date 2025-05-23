@@ -19,13 +19,14 @@ from django.urls import path, include
 from core.views import (
     listar_proveedores,
     realizar_compra, 
-    lista_clientes, 
+    listar_ventas, 
     seguimiento_venta
     )
 from inventario.views import productos, agregar_producto, editar_producto, eliminar_producto
 from proveedores.views import listar_proveedores, agregar_proveedor, editar_proveedor, eliminar_proveedor
 from administracion.views import CustomLoginView
 from proveedores.views import agregar_proveedor, editar_proveedor, eliminar_proveedor
+from ventas.views import listar_ventas, agregar_venta, editar_venta, eliminar_venta
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -53,7 +54,10 @@ urlpatterns = [
     path('compra/', realizar_compra, name='realizar_compra'),
 
     #Venta
-    path('ventas/clientes/', lista_clientes, name='lista_clientes'),
+    path('ventas/', listar_ventas, name='listar_ventas'),
+    path('ventas/agregar/', agregar_venta, name='agregar_venta'),
+    path('ventas/editar/<int:venta_id>/', editar_venta, name='editar_venta'),
+    path('ventas/eliminar/<int:venta_id>/', eliminar_venta, name='eliminar_venta'),
     path('ventas/seguimiento/', seguimiento_venta, name='seguimiento_venta'),
 ]
 

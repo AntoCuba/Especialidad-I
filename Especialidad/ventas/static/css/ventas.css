@@ -1,0 +1,38 @@
+.roboto-font {
+    font-family: 'Roboto', sans-serif;
+}
+
+td .btn-ver-proveedor,
+td .btn-editar,
+td form button {
+    margin-right: 5px;
+}
+
+td img {
+    height: 20px;
+    width: 20px;
+}
+
+button.disabled img {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+#myTable th, #myTable td {
+    vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .search-container input {
+        width: 100% !important;
+    }
+}

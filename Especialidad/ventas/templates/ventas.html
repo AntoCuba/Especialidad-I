@@ -1,0 +1,282 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<h1 class="text-start mb-5 mt-4 roboto-font">Ventas</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="{% static 'css/ventas.css' %}" rel="stylesheet" />
+
+<div class="d-flex justify-content-between align-items-start mb-3 search-container">
+    <div class="d-flex justify-content-start flex-grow-1">
+        <input type="text" id="searchInput" class="form-control w-75" placeholder="Buscar venta...">
+    </div>
+    {% if user.is_superuser or user.position == "Administrador" %}
+    <div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarVentaModal">
+            Agregar
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="agregarVentaModal" tabindex="-1" aria-labelledby="agregarVentaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="formAgregarVenta" method="post" action="{% url 'agregar_venta' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="agregarVentaModalLabel">Agregar Venta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="agregarIdPedido" class="form-label">ID del Pedido</label>
+                <input type="number" class="form-control" id="agregarIdPedido" name="id_pedido" required>
+              </div>
+              <div class="mb-3">
+                <label for="agregarNombreCliente" class="form-label">Nombre Cliente</label>
+                <input type="text" class="form-control" id="agregarNombreCliente" name="nombre_cliente" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="agregarMontoTotal" class="form-label">Monto Total</label>
+                <input type="number" step="0.01" class="form-control" id="agregarMontoTotal" name="monto_total" required>
+              </div>
+              <div class="mb-3">
+                <label for="agregarEstadoEnvio" class="form-label">Estado de Envío</label>
+                <select class="form-select" id="agregarEstadoEnvio" name="estado_envio" required>
+                  <option value="proceso">En Proceso</option>
+                  <option value="enviado">Enviado</option>
+                  <option value="entregado">Entregado</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive">
+        <table id="myTable" class="table row-border">
+            <thead>
+              <tr>
+                <th>ID Pedido</th>
+                <th>Nombre Cliente</th>
+                <th>Monto Total</th>
+                <th>Estado Envío</th>
+                <th>Fecha Compra</th>
+                <th>Acciones</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.id_pedido }}</td>
+                <td>{{ venta.nombre_cliente }}</td>
+                <td>${{ venta.monto_total }}</td>
+                <td>{{ venta.get_estado_envio_display }}</td>
+                <td>{{ venta.fecha_compra|date:"Y-m-d H:i" }}</td>
+                <td>
+                {% if user.is_superuser or user.position == "Administrador" %}
+                <a href="#" class="btn-ver-venta" data-bs-toggle="modal" data-bs-target="#verVentaModal"
+                    data-id="{{ venta.id }}"
+                    data-id_pedido="{{ venta.id_pedido }}"
+                    data-nombre_cliente="{{ venta.nombre_cliente }}"
+                    data-monto_total="{{ venta.monto_total }}"
+                    data-estado_envio="{{ venta.estado_envio }}"
+                    data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d H:i' }}"
+                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver venta" style="height: 20px; width: 20px;">
+                </a>
+                <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarVentaModal" 
+                    data-id="{{ venta.id }}"
+                    data-id_pedido="{{ venta.id_pedido }}"
+                    data-nombre_cliente="{{ venta.nombre_cliente }}"
+                    data-monto_total="{{ venta.monto_total|floatformat:2 }}"
+                    data-estado_envio="{{ venta.estado_envio }}"
+                    data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d' }}"
+                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
+                </a>
+                <form method="post" action="{% url 'eliminar_venta' venta.id %}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar esta venta?');">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                        <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                    </button>
+                </form>
+                {% else %}
+                <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar" type="button">
+                    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
+                </button>
+                <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar" type="button">
+                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
+                </button>
+                {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay ventas registradas.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="verVentaModal" tabindex="-1" aria-labelledby="verVentaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verVentaModalLabel">Detalles de la Venta</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formVerVenta">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="verIdPedido" class="form-label">ID del Pedido</label>
+                <input type="number" class="form-control" id="verIdPedido" name="id_pedido" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verNombreCliente" class="form-label">Nombre Cliente</label>
+                <input type="text" class="form-control" id="verNombreCliente" name="nombre_cliente" readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="verMontoTotal" class="form-label">Monto Total</label>
+                <input type="text" class="form-control" id="verMontoTotal" name="monto_total" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verEstadoEnvio" class="form-label">Estado Envío</label>
+                <input type="text" class="form-control" id="verEstadoEnvio" name="estado_envio" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verFechaCompra" class="form-label">Fecha Compra</label>
+                <input type="text" class="form-control" id="verFechaCompra" name="fecha_compra" readonly />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editarVentaModal" tabindex="-1" aria-labelledby="editarVentaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="formEditarVenta" method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" id="editarId" name="id" />
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarVentaModalLabel">Editar Venta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarIdPedido" class="form-label">ID del Pedido</label>
+                <input type="number" class="form-control" id="editarIdPedido" name="id_pedido" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarNombreCliente" class="form-label">Nombre Cliente</label>
+                <input type="text" class="form-control" id="editarNombreCliente" name="nombre_cliente" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarMontoTotal" class="form-label">Monto Total</label>
+                <input type="number" step="0.01" class="form-control" id="editarMontoTotal" name="monto_total" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarEstadoEnvio" class="form-label">Estado de Envío</label>
+                <select class="form-select" id="editarEstadoEnvio" name="estado_envio" required>
+                  <option value="proceso">En Proceso</option>
+                  <option value="enviado">Enviado</option>
+                  <option value="entregado">Entregado</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  // Filtro busqueda en tabla
+  $('#searchInput').on('keyup', function() {
+    var value = $(this).val().toLowerCase();
+    $('#myTable tbody tr').filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+
+  // Modal Ver carga datos
+  $('.btn-ver-venta').on('click', function() {
+    $('#verIdPedido').val($(this).data('id_pedido'));
+    $('#verNombreCliente').val($(this).data('nombre_cliente'));
+    $('#verMontoTotal').val(`$${$(this).data('monto_total')}`);
+    var estado = $(this).data('estado_envio');
+    var estadoText = {
+      'proceso': 'En Proceso',
+      'enviado': 'Enviado',
+      'entregado': 'Entregado',
+      'cancelado': 'Cancelado'
+    }[estado];
+    $('#verEstadoEnvio').val(estadoText);
+    $('#verFechaCompra').val($(this).data('fecha_compra'));
+  });
+
+  // Modal Editar carga datos
+  $(document).on("click", ".btn-editar", function () {
+    $("#editarId").val($(this).data("id"));
+    $("#editarIdPedido").val($(this).data("id_pedido"));
+    $("#editarNombreCliente").val($(this).data("nombre_cliente"));
+    let monto = $(this).data("monto_total");
+    if (typeof monto === "string") {
+        monto = monto.replace(",", ".");
+    }
+    $("#editarMontoTotal").val(monto);
+    $("#editarEstadoEnvio").val($(this).data("estado_envio"));
+
+    $("#editarVentaModal").modal("show");
+
+    let id = $(this).data("id");
+    $("#formEditarVenta").attr("action", `/ventas/editar/${id}/`);
+  });
+</script>
+
+{% endblock %}
