@@ -69,13 +69,15 @@
                     </ul>
                 </li>
             </ul>
-            <h3> Cerrar sesión </h3>
-            <form method="post" action="{% url 'logout' %}" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-logout" style="background: none; border: none; padding: 0;">
-                    <img src="{% static 'images/log-out-outlined-svgrepo-com.svg' %}" alt="Cerrar sesión" style="width: 24px; height: 24px;">
-                </button>
-            </form> 
+            <div class="sidebar-logout-container">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-logout" style="background: none; border: none; padding: 0;">
+                        <img src="{% static 'images/log-out-outlined-svgrepo-com.svg' %}" alt="Cerrar sesión" style="width: 24px; height: 24px;">
+                    </button>
+                </form>
+                <h3 class="logout-text">Cerrar sesión</h3>
+            </div>
         </aside>
         <main class="main">
             {% block content %}

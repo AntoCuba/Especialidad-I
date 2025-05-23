@@ -1,4 +1,18 @@
 
+td:last-child {
+  display: flex !important;
+  gap: 5px !important;
+  align-items: center !important;
+}
+
+td:last-child > * {
+  border: none !important;
+  box-shadow: none !important;
+  background: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 td form {
   display: inline-block;
   margin: 0 8px 0 0;
