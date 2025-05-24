@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 id: button.getAttribute('data-id'),
                 nombre: button.getAttribute('data-nombre'),
                 producto: button.getAttribute('data-producto'),
+                descripcion: button.getAttribute('data-descripcion') || '',
                 autenticacion: button.getAttribute('data-autenticacion') === 'true',
                 tiempo_envio: button.getAttribute('data-tiempo-envio') || ''
             };
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.querySelector('#editarProductoProveedor').value = proveedorData.producto;
             modal.querySelector('#editarAutenticacionProveedor').checked = proveedorData.autenticacion;
             modal.querySelector('#editarTiempoEnvioProveedor').value = proveedorData.tiempo_envio;
+            modal.querySelector('#editarDescripcionProveedor').value = proveedorData.descripcion;
 
             var form = modal.querySelector('#formEditarProveedor');
             if (form) {
@@ -38,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var proveedorData = {
                 nombre: button.getAttribute('data-nombre'),
                 producto: button.getAttribute('data-producto'),
+                descripcion: button.getAttribute('data-descripcion') || '',
                 autenticacion: button.getAttribute('data-autenticacion') === 'true',
                 tiempo_envio: button.getAttribute('data-tiempo-envio') || ''
             };
@@ -47,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var modal = this;
             modal.querySelector('#verNombreProveedor').value = proveedorData.nombre;
             modal.querySelector('#verProductoProveedor').value = proveedorData.producto;
+            modal.querySelector('#verDescripcionProveedor').value = proveedorData.descripcion;
             modal.querySelector('#verAutenticacionProveedor').value = proveedorData.autenticacion ? 'Sí' : 'No';
             modal.querySelector('#verTiempoEnvioProveedor').value = proveedorData.tiempo_envio;
         });
@@ -82,4 +86,22 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
+
+    // Allow only digits and "-" in tiempo de envio inputs, no suffix added
+    function setupTiempoEnvioInput(inputId) {
+        var input = document.getElementById(inputId);
+        if (!input) return;
+
+        input.addEventListener('input', function(e) {
+            var value = input.value;
+
+            // Remove characters other than digits and "-"
+            value = value.replace(/[^0-9\-]/g, '');
+
+            input.value = value;
+        });
+    }
+
+    setupTiempoEnvioInput('agregarTiempoEnvioProveedor');
+    setupTiempoEnvioInput('editarTiempoEnvioProveedor');
 });

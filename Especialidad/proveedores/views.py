@@ -16,12 +16,14 @@ def agregar_proveedor(request):
         producto = request.POST.get('producto')
         autenticacion = request.POST.get('autenticacion', 'off') == 'on'  
         tiempo_envio = request.POST.get('tiempo_envio')
+        descripcion = request.POST.get('descripcion', '')
 
         Proveedor.objects.create(
             nombre=nombre,
             producto=producto,
             autenticacion=autenticacion,
-            tiempo_envio=tiempo_envio
+            tiempo_envio=tiempo_envio,
+            descripcion=descripcion
         )
         return HttpResponseRedirect(reverse('listar_proveedores'))
 
@@ -33,6 +35,7 @@ def editar_proveedor(request, proveedor_id):
         proveedor.producto = request.POST.get('producto')
         proveedor.autenticacion = request.POST.get('autenticacion', 'off') == 'on'
         proveedor.tiempo_envio = request.POST.get('tiempo_envio')
+        proveedor.descripcion = request.POST.get('descripcion', '')
         proveedor.save()
         return HttpResponseRedirect(reverse('listar_proveedores'))
 
