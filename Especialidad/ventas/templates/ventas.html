@@ -33,18 +33,63 @@
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="agregarIdPedido" class="form-label">ID del Pedido</label>
-                <input type="number" class="form-control" id="agregarIdPedido" name="id_pedido" required>
+                <label for="agregarIdPedido" class="form-label">Producto (Número de Orden)</label>
+                <select class="form-select" id="agregarIdPedido" name="id_pedido" required>
+                  <option value="" disabled selected>Seleccione un producto</option>
+                  {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.numero_orden }} ({{ producto.nombre_producto }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="agregarTalla" class="form-label">Talla</label>
+                <select class="form-select" id="agregarTalla" name="talla" required>
+                  <option value="" disabled selected>Seleccione una talla</option>
+                </select>
               </div>
               <div class="mb-3">
                 <label for="agregarNombreCliente" class="form-label">Nombre Cliente</label>
                 <input type="text" class="form-control" id="agregarNombreCliente" name="nombre_cliente" required>
               </div>
+              <div class="mb-3">
+                <label for="agregarRegion" class="form-label">Región</label>
+                <select class="form-select" id="agregarRegion" name="region" required>
+                  <option value="" disabled selected>Seleccione una región</option>
+                  <option value="arica_parinacota">Región de Arica y Parinacota</option>
+                  <option value="tarapaca">Región de Tarapacá</option>
+                  <option value="antofagasta">Región de Antofagasta</option>
+                  <option value="atacama">Región de Atacama</option>
+                  <option value="coquimbo">Región de Coquimbo</option>
+                  <option value="valparaiso">Región de Valparaíso</option>
+                  <option value="metropolitana">Región Metropolitana</option>
+                  <option value="ohiggins">Región de O’Higgins</option>
+                  <option value="maule">Región del Maule</option>
+                  <option value="nuble">Región del Ñuble</option>
+                  <option value="biobio">Región de Biobío</option>
+                  <option value="araucania">Región de La Araucanía</option>
+                  <option value="rios">Región de Los Ríos</option>
+                  <option value="lagos">Región de Los Lagos</option>
+                  <option value="aysen">Región de Aysén</option>
+                  <option value="magallanes">Región de Magallanes</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="agregarDireccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="agregarDireccion" name="direccion" required>
+              </div>
             </div>
-            <div class="col-md-6">
+              <div class="col-md-6">
               <div class="mb-3">
                 <label for="agregarMontoTotal" class="form-label">Monto Total</label>
                 <input type="number" step="0.01" class="form-control" id="agregarMontoTotal" name="monto_total" required>
+              </div>
+              <div class="mb-3">
+                <label for="agregarEmail" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="agregarEmail" name="email" required>
+              </div>
+              <div class="mb-3">
+                <label for="agregarTelefono" class="form-label">Teléfono</label>
+                <input type="tel" pattern="^\+?1?\d{9,15}$" class="form-control" id="agregarTelefono" name="telefono" required>
               </div>
               <div class="mb-3">
                 <label for="agregarEstadoEnvio" class="form-label">Estado de Envío</label>
@@ -52,7 +97,6 @@
                   <option value="proceso">En Proceso</option>
                   <option value="enviado">Enviado</option>
                   <option value="entregado">Entregado</option>
-                  <option value="cancelado">Cancelado</option>
                 </select>
               </div>
             </div>
@@ -85,33 +129,42 @@
           <tbody>
             {% for venta in ventas %}
             <tr>
-                <td>{{ venta.id_pedido }}</td>
+                <td>{{ venta.id_pedido.numero_orden }}</td>
                 <td>{{ venta.nombre_cliente }}</td>
                 <td>${{ venta.monto_total }}</td>
                 <td>{{ venta.get_estado_envio_display }}</td>
-                <td>{{ venta.fecha_compra|date:"Y-m-d H:i" }}</td>
+                <td>{{ venta.fecha_compra|date:"d-m-Y" }}</td>
                 <td>
                 {% if user.is_superuser or user.position == "Administrador" %}
-                <a href="#" class="btn-ver-venta" data-bs-toggle="modal" data-bs-target="#verVentaModal"
-                    data-id="{{ venta.id }}"
-                    data-id_pedido="{{ venta.id_pedido }}"
-                    data-nombre_cliente="{{ venta.nombre_cliente }}"
-                    data-monto_total="{{ venta.monto_total }}"
-                    data-estado_envio="{{ venta.estado_envio }}"
-                    data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d H:i' }}"
-                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
-                    <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver venta" style="height: 20px; width: 20px;">
-                </a>
-                <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarVentaModal" 
-                    data-id="{{ venta.id }}"
-                    data-id_pedido="{{ venta.id_pedido }}"
-                    data-nombre_cliente="{{ venta.nombre_cliente }}"
-                    data-monto_total="{{ venta.monto_total|floatformat:2 }}"
-                    data-estado_envio="{{ venta.estado_envio }}"
-                    data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d' }}"
-                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
-                    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
-                </a>
+<a href="#" class="btn-ver-venta" data-bs-toggle="modal" data-bs-target="#verVentaModal"
+    data-id="{{ venta.id }}"
+    data-id_pedido="{{ venta.id_pedido.numero_orden }}"
+    data-nombre_cliente="{{ venta.nombre_cliente }}"
+    data-talla="{% if venta.talla %}{{ venta.talla.talla }}{% else %}N/A{% endif %}"
+    data-direccion="{{ venta.direccion }}"
+    data-email="{{ venta.email }}"
+    data-telefono="{{ venta.telefono }}"
+    data-region="{{ venta.region }}"
+    data-monto_total="{{ venta.monto_total }}"
+    data-estado_envio="{{ venta.estado_envio }}"
+    data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d' }}"
+    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+    <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver venta" style="height: 20px; width: 20px;">
+</a>
+<a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarVentaModal" 
+    data-id="{{ venta.id }}"
+    data-id_pedido="{{ venta.id_pedido.id }}"
+    data-nombre_cliente="{{ venta.nombre_cliente }}"
+    data-direccion="{{ venta.direccion }}"
+    data-email="{{ venta.email }}"
+    data-telefono="{{ venta.telefono }}"
+    data-monto_total="{{ venta.formatted_monto_total }}"
+    data-estado_envio="{{ venta.estado_envio }}"
+    data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d' }}"
+    data-talla="{% if venta.talla %}{{ venta.talla.id }}{% else %}0{% endif %}"
+    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px;">
+</a>
                 <form method="post" action="{% url 'eliminar_venta' venta.id %}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar esta venta?');">
                     {% csrf_token %}
                     <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
@@ -152,12 +205,24 @@
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="verIdPedido" class="form-label">ID del Pedido</label>
+                <label for="verIdPedido" class="form-label">Producto (Número de Orden)</label>
                 <input type="number" class="form-control" id="verIdPedido" name="id_pedido" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verTalla" class="form-label">Talla</label>
+                <input type="text" class="form-control" id="verTalla" name="talla" readonly />
               </div>
               <div class="mb-3">
                 <label for="verNombreCliente" class="form-label">Nombre Cliente</label>
                 <input type="text" class="form-control" id="verNombreCliente" name="nombre_cliente" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verRegion" class="form-label">Región</label>
+                <input type="text" class="form-control" id="verRegion" name="region" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verDireccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="verDireccion" name="direccion" readonly />
               </div>
             </div>
             <div class="col-md-6">
@@ -166,7 +231,15 @@
                 <input type="text" class="form-control" id="verMontoTotal" name="monto_total" readonly />
               </div>
               <div class="mb-3">
-                <label for="verEstadoEnvio" class="form-label">Estado Envío</label>
+                <label for="verEmail" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="verEmail" name="email" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verTelefono" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="verTelefono" name="telefono" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="verEstadoEnvio" class="form-label">Estado de Envío</label>
                 <input type="text" class="form-control" id="verEstadoEnvio" name="estado_envio" readonly />
               </div>
               <div class="mb-3">
@@ -199,17 +272,62 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="editarIdPedido" class="form-label">ID del Pedido</label>
-                <input type="number" class="form-control" id="editarIdPedido" name="id_pedido" required />
+                <select class="form-select" id="editarIdPedido" name="id_pedido" required>
+                  <option value="" disabled>Seleccione un número de producto</option>
+                  {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.numero_orden }} ({{ producto.nombre_producto }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editarTalla" class="form-label">Talla</label>
+                <select class="form-select" id="editarTalla" name="talla" required>
+                  <option value="" disabled selected>Seleccione una talla</option>
+                </select>
               </div>
               <div class="mb-3">
                 <label for="editarNombreCliente" class="form-label">Nombre Cliente</label>
                 <input type="text" class="form-control" id="editarNombreCliente" name="nombre_cliente" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarRegion" class="form-label">Región</label>
+                <select class="form-select" id="editarRegion" name="region" required>
+                  <option value="" disabled selected>Seleccione una región</option>
+                  <option value="arica_parinacota">Región de Arica y Parinacota</option>
+                  <option value="tarapaca">Región de Tarapacá</option>
+                  <option value="antofagasta">Región de Antofagasta</option>
+                  <option value="atacama">Región de Atacama</option>
+                  <option value="coquimbo">Región de Coquimbo</option>
+                  <option value="valparaiso">Región de Valparaíso</option>
+                  <option value="metropolitana">Región Metropolitana</option>
+                  <option value="ohiggins">Región de O’Higgins</option>
+                  <option value="maule">Región del Maule</option>
+                  <option value="nuble">Región del Ñuble</option>
+                  <option value="biobio">Región de Biobío</option>
+                  <option value="araucania">Región de La Araucanía</option>
+                  <option value="rios">Región de Los Ríos</option>
+                  <option value="lagos">Región de Los Lagos</option>
+                  <option value="aysen">Región de Aysén</option>
+                  <option value="magallanes">Región de Magallanes</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editarDireccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="editarDireccion" name="direccion" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="editarMontoTotal" class="form-label">Monto Total</label>
                 <input type="number" step="0.01" class="form-control" id="editarMontoTotal" name="monto_total" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarEmail" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="editarEmail" name="email" required />
+              </div>
+              <div class="mb-3">
+                <label for="editarTelefono" class="form-label">Teléfono</label>
+                <input type="tel" pattern="^\+?1?\d{9,15}$" class="form-control" id="editarTelefono" name="telefono" required />
               </div>
               <div class="mb-3">
                 <label for="editarEstadoEnvio" class="form-label">Estado de Envío</label>
@@ -232,51 +350,16 @@
   </div>
 </div>
 
+<script id="productosPreciosData" type="application/json">
+{{ productos_precios_json|safe }}
+</script>
+
+<script id="productosTallasData" type="application/json">
+{{ productos_tallas_json|safe }}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-  // Filtro busqueda en tabla
-  $('#searchInput').on('keyup', function() {
-    var value = $(this).val().toLowerCase();
-    $('#myTable tbody tr').filter(function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-    });
-  });
-
-  // Modal Ver carga datos
-  $('.btn-ver-venta').on('click', function() {
-    $('#verIdPedido').val($(this).data('id_pedido'));
-    $('#verNombreCliente').val($(this).data('nombre_cliente'));
-    $('#verMontoTotal').val(`$${$(this).data('monto_total')}`);
-    var estado = $(this).data('estado_envio');
-    var estadoText = {
-      'proceso': 'En Proceso',
-      'enviado': 'Enviado',
-      'entregado': 'Entregado',
-      'cancelado': 'Cancelado'
-    }[estado];
-    $('#verEstadoEnvio').val(estadoText);
-    $('#verFechaCompra').val($(this).data('fecha_compra'));
-  });
-
-  // Modal Editar carga datos
-  $(document).on("click", ".btn-editar", function () {
-    $("#editarId").val($(this).data("id"));
-    $("#editarIdPedido").val($(this).data("id_pedido"));
-    $("#editarNombreCliente").val($(this).data("nombre_cliente"));
-    let monto = $(this).data("monto_total");
-    if (typeof monto === "string") {
-        monto = monto.replace(",", ".");
-    }
-    $("#editarMontoTotal").val(monto);
-    $("#editarEstadoEnvio").val($(this).data("estado_envio"));
-
-    $("#editarVentaModal").modal("show");
-
-    let id = $(this).data("id");
-    $("#formEditarVenta").attr("action", `/ventas/editar/${id}/`);
-  });
-</script>
+<script src="{% static 'js/ventas.js' %}"></script>
 
 {% endblock %}
