@@ -16,19 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
 from core.views import (
     listar_proveedores,
-    realizar_compra, 
     listar_ventas, 
     seguimiento_venta
     )
+
 from inventario.views import productos, agregar_producto, editar_producto, eliminar_producto
 from proveedores.views import listar_proveedores, agregar_proveedor, editar_proveedor, eliminar_proveedor
 from administracion.views import CustomLoginView
 from proveedores.views import agregar_proveedor, editar_proveedor, eliminar_proveedor
 from ventas.views import listar_ventas, agregar_venta, editar_venta, eliminar_venta
-from django.conf import settings
-from django.conf.urls.static import static
+from compra.views import realizar_compra
 
 urlpatterns = [
     #Admin

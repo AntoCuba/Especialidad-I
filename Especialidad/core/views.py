@@ -9,9 +9,6 @@ def productos(request):
 def listar_proveedores(request):
     return render(request, 'listar_proveedores.html')
 
-def realizar_compra(request):
-    return render(request, 'realizar_compra.html')  
-
 def listar_ventas(request):
     return render(request, 'ventas.html')  
 
