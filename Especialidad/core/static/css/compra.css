@@ -14,9 +14,9 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    height: 500px;
-    padding: 40px;
-    gap: 70px;
+    height: 540px;
+    padding: 30px;
+    gap: 45px;
 }
 
 .content_box_cards a {
@@ -29,15 +29,15 @@
 .card_compra{
     border-radius: 8px;
     border: 1px solid black;
-    width: 263px;
-    height: 236px;
+    width: 200px;
+    height: 210px;
     display: flex;
     flex-direction: column;
 }
 
 .photo_box{
     width: 100%;
-    height: 70%;
+    height: 80%;
     border-bottom: 1px solid black;
     border-radius: 8px;
     background-color: #d9d9d9;
@@ -47,8 +47,9 @@
 }
 
 .photo_box img {
-    width: 121px;
-    height: 121px;
+    width: 115px;
+    height: 115px;
+    border-radius: 1rem;
 }
 
 .info_card{
@@ -59,5 +60,14 @@
 
 .info_card h4, p{
     text-align: center;
+    font-size: medium;
 }
 
+.step-links a{
+    all: unset;
+    cursor: pointer;
+}
+
+.pagination{
+    justify-content: right;
+}
