@@ -91,49 +91,72 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    editarProductoModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var productoId = button.getAttribute('data-id');
+    var agregarProductoModalElement = document.getElementById('agregarProductoModal');
+    var agregarProductoModal = new bootstrap.Modal(agregarProductoModalElement);
 
-        editarTallasContainer.innerHTML = '';
-        editarTallasContainer.appendChild(createHeaderRow());
+    var formAgregarProducto = document.getElementById('formAgregarProducto');
+    var submitButton = document.getElementById('submitButton');
+    var productoIdHidden = document.getElementById('productoIdHidden');
 
-        var tallasData = button.getAttribute('data-tallas');
-        var cantidadesData = button.getAttribute('data-cantidades');
+    function clearForm() {
+        formAgregarProducto.reset();
+        productoIdHidden.value = '';
+        tallasContainer.innerHTML = '';
+        tallasContainer.appendChild(createTallaCantidadRow());
+        submitButton.textContent = 'Agregar';
+        formAgregarProducto.action = formAgregarProducto.getAttribute('data-agregar-url');
+    }
 
-        var tallas = [];
-        var cantidades = [];
+    var btnAgregarProducto = document.getElementById('btnAgregarProducto');
+    if (btnAgregarProducto) {
+        btnAgregarProducto.addEventListener('click', function () {
+            clearForm();
+            agregarProductoModal.show();
+        });
+    }
 
-        try {
-            if (tallasData) {
-                tallas = JSON.parse(tallasData);
+    document.querySelectorAll('.btn-editar').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            var productoId = this.getAttribute('data-id');
+            var nombreProducto = this.getAttribute('data-nombre');
+            var numeroOrden = this.getAttribute('data-numeroorden');
+            var valorProductoUnidad = this.getAttribute('data-valorproductounidad');
+            var numeroTracking = this.getAttribute('data-numerotracking');
+            var proveedor = this.getAttribute('data-proveedor');
+            var precioVenta = this.getAttribute('data-precioventa');
+            var tallasData = this.getAttribute('data-tallas');
+            var cantidadesData = this.getAttribute('data-cantidades');
+
+            productoIdHidden.value = productoId;
+            formAgregarProducto.action = '/inventario/editar/' + productoId + '/';
+            submitButton.textContent = 'Guardar cambios';
+
+            document.getElementById('agregarNombreProducto').value = nombreProducto || '';
+            document.getElementById('agregarNumeroOrden').value = numeroOrden || '';
+            document.getElementById('agregarValorProductoUnidad').value = valorProductoUnidad || '';
+            document.getElementById('agregarNumeroTracking').value = numeroTracking || '';
+            document.getElementById('agregarProveedor').value = proveedor || '';
+            document.getElementById('agregarPrecioVenta').value = precioVenta || '';
+
+            tallasContainer.innerHTML = '';
+            try {
+                var tallas = JSON.parse(tallasData);
+                var cantidades = JSON.parse(cantidadesData);
+                if (tallas.length === cantidades.length) {
+                    for (var i = 0; i < tallas.length; i++) {
+                        tallasContainer.appendChild(createTallaCantidadRow(tallas[i], cantidades[i]));
+                    }
+                } else {
+                    tallasContainer.appendChild(createTallaCantidadRow());
+                }
+            } catch (e) {
+                console.error('Error parsing tallas or cantidades JSON:', e);
+                tallasContainer.appendChild(createTallaCantidadRow());
             }
-            if (cantidadesData) {
-                cantidades = JSON.parse(cantidadesData);
-            }
-        } catch (e) {
-            console.error('Error parsing tallas or cantidades JSON:', e);
-        }
 
-        if (tallas.length > 0 && cantidades.length > 0 && tallas.length === cantidades.length) {
-            for (var i = 0; i < tallas.length; i++) {
-                editarTallasContainer.appendChild(createTallaCantidadRow(tallas[i], cantidades[i]));
-            }
-        } else {
-            editarTallasContainer.appendChild(createTallaCantidadRow());
-        }
-
-        var modal = this;
-        modal.querySelector('#editarProductoId').value = productoId;
-        modal.querySelector('#editarNombreProducto').value = button.getAttribute('data-nombre') || '';
-        modal.querySelector('#editarNumeroOrden').value = button.getAttribute('data-numeroorden') || '';
-        modal.querySelector('#editarValorProductoUnidad').value = button.getAttribute('data-valorproductounidad') || '';
-        modal.querySelector('#editarNumeroTracking').value = button.getAttribute('data-numerotracking') || '';
-        modal.querySelector('#editarProveedor').value = button.getAttribute('data-proveedor') || '';
-        modal.querySelector('#editarPrecioVenta').value = button.getAttribute('data-precioventa') || '';
-
-        var form = modal.querySelector('#formEditarProducto');
-        form.action = '/inventario/editar/' + productoId + '/';
+            agregarProductoModal.show();
+        });
     });
 
     var verProductoModal = document.getElementById('verProductoModal');
@@ -143,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var numeroOrden = button.getAttribute('data-numeroorden');
         var valorProductoUnidad = button.getAttribute('data-valorproductounidad');
         var numeroTracking = button.getAttribute('data-numerotracking');
-        var proveedor = button.getAttribute('data-proveedor');
+        var proveedorNombre = button.getAttribute('data-proveedor-nombre');
         var precioVenta = button.getAttribute('data-precioventa');
         var boletaFactura = button.getAttribute('data-boleta_factura');
         var tallasData = button.getAttribute('data-tallas');
@@ -167,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.querySelector('#verNumeroOrden').value = numeroOrden;
         modal.querySelector('#verValorProductoUnidad').value = valorProductoUnidad;
         modal.querySelector('#verNumeroTracking').value = numeroTracking;
-        modal.querySelector('#verProveedor').value = proveedor;
+        modal.querySelector('#verProveedor').value = proveedorNombre;
         modal.querySelector('#verPrecioVenta').value = precioVenta;
 
         var tallaInput = modal.querySelector('#verTalla');
@@ -237,3 +260,5 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+
