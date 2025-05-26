@@ -37,7 +37,7 @@
                 <select class="form-select" id="agregarIdPedido" name="id_pedido" required>
                   <option value="" disabled selected>Seleccione un producto</option>
                   {% for producto in productos %}
-                    <option value="{{ producto.id }}">{{ producto.numero_orden }} ({{ producto.nombre_producto }})</option>
+                    <option value="{{ producto.id }}">{{ producto.nombre_producto }} ({{ producto.numero_orden }})</option>
                   {% endfor %}
                 </select>
               </div>
@@ -164,6 +164,7 @@
     data-telefono="{{ venta.telefono }}"
     data-monto_total="{{ venta.formatted_monto_total }}"
     data-estado_envio="{{ venta.estado_envio }}"
+    data-region="{{ venta.region }}"
     data-fecha_compra="{{ venta.fecha_compra|date:'Y-m-d' }}"
     data-talla="{% if venta.talla %}{{ venta.talla.id }}{% else %}0{% endif %}"
     style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
@@ -208,18 +209,19 @@
         <form id="formVerVenta">
           <div class="row">
             <div class="col-md-6">
-              <div class="mb-3">
-                <label for="verIdPedido" class="form-label">Producto (Número de Orden)</label>
-                <input type="number" class="form-control" id="verIdPedido" name="id_pedido" readonly />
-              </div>
+<div class="mb-3">
+  <label for="verIdPedido" class="form-label">Producto (Número de Orden)</label>
+  <input type="text" class="form-control" id="verIdPedido" name="id_pedido" readonly />
+</div>
               <div class="mb-3">
                 <label for="verNumeroOrden" class="form-label">Número de Orden</label>
                 <input type="text" class="form-control" id="verNumeroOrden" name="numero_orden" readonly />
               </div>
               <div class="mb-3">
                 <label for="verTalla" class="form-label">Talla</label>
-                <input type="text" class="form-control" id="verTalla" name="talla" readonly />
+                <input type="text" class="form-control" id="verTalla" name="talla" value="{% if venta.talla %}{{ venta.talla.talla }}{% else %}N/A{% endif %}" readonly />
               </div>
+
               <div class="mb-3">
                 <label for="verNombreCliente" class="form-label">Nombre Cliente</label>
                 <input type="text" class="form-control" id="verNombreCliente" name="nombre_cliente" readonly />
@@ -279,11 +281,11 @@
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="editarIdPedido" class="form-label">ID del Pedido</label>
+                <label for="editarIdPedido" class="form-label">Producto (Número de Orden)</label>
                 <select class="form-select" id="editarIdPedido" name="id_pedido" required>
                   <option value="" disabled>Seleccione un producto</option>
                   {% for producto in productos %}
-                    <option value="{{ producto.id }}">{{ producto.numero_orden }} ({{ producto.nombre_producto }})</option>
+                    <option value="{{ producto.id }}">{{ producto.nombre_producto }} ({{ producto.numero_orden }})</option>
                   {% endfor %}
                 </select>
               </div>
@@ -291,6 +293,9 @@
                 <label for="editarTalla" class="form-label">Talla</label>
                 <select class="form-select" id="editarTalla" name="talla" required>
                   <option value="" disabled selected>Seleccione una talla</option>
+                  {% if venta.talla %}
+                  <option value="{{ venta.talla.id }}" selected>{{ venta.talla.talla }}</option>
+                  {% endif %}
                 </select>
               </div>
               <div class="mb-3">

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Venta, ESTADOS_ENVIO
-from inventario.models import Producto
+from inventario.models import Producto, ProductoTalla
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse
@@ -68,6 +68,16 @@ def agregar_venta(request):
             region=region,
         )
 
+        try:
+            producto_talla = ProductoTalla.objects.get(id=talla_id)
+            if producto_talla.cantidad > 0:
+                producto_talla.cantidad -= 1
+                producto_talla.save()
+            else:
+                pass
+        except ProductoTalla.DoesNotExist:
+            pass
+
         ActivityLog.objects.create(
             user=request.user if request.user.is_authenticated else None,
             action='add_venta',
@@ -101,6 +111,7 @@ def agregar_venta(request):
 def editar_venta(request, venta_id):
     venta = get_object_or_404(Venta, pk=venta_id)
     if request.method == 'POST':
+        old_estado_envio = venta.estado_envio
         venta.id_pedido_id = request.POST.get('id_pedido')
         venta.talla_id = request.POST.get('talla')
         venta.nombre_cliente = request.POST.get('nombre_cliente')
@@ -108,8 +119,24 @@ def editar_venta(request, venta_id):
         venta.email = request.POST.get('email')
         venta.telefono = request.POST.get('telefono')
         venta.monto_total = request.POST.get('monto_total')
-        venta.estado_envio = request.POST.get('estado_envio')
+        new_estado_envio = request.POST.get('estado_envio')
+        venta.estado_envio = new_estado_envio
+        venta.region = request.POST.get('region')
         venta.save()
+
+        try:
+            producto_talla = ProductoTalla.objects.get(id=venta.talla_id)
+            if old_estado_envio != 'cancelado' and new_estado_envio == 'cancelado':
+                producto_talla.cantidad += 1
+                producto_talla.save()
+            elif old_estado_envio == 'cancelado' and new_estado_envio != 'cancelado':
+                if producto_talla.cantidad > 0:
+                    producto_talla.cantidad -= 1
+                    producto_talla.save()
+                else:
+                    pass
+        except ProductoTalla.DoesNotExist:
+            pass
 
         ActivityLog.objects.create(
             user=request.user if request.user.is_authenticated else None,

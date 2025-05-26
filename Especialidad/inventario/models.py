@@ -1,4 +1,5 @@
 from django.db import models
+from proveedores.models import Proveedor
 
 class Producto(models.Model):
     nombre_producto = models.CharField(max_length=100)
@@ -6,6 +7,7 @@ class Producto(models.Model):
     valor_producto_unidad = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     numero_tracking = models.CharField(max_length=100, blank=True, null=True)
     proveedor = models.CharField(max_length=100, blank=True, null=True)
+    proveedor_fk = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, blank=True, null=True, related_name='productos')
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
     boleta_factura = models.FileField(upload_to='boletas_facturas/', blank=True, null=True)
 
@@ -17,8 +19,12 @@ class Producto(models.Model):
 
     def get_tallas_cantidades_str(self):
         parts = []
+        all_zero = all(pt.cantidad == 0 for pt in self.productotalla_set.all())
+        if all_zero:
+            return "Sin Stock"
         for pt in self.productotalla_set.all():
-            parts.append(f"{pt.talla} ({pt.cantidad})")
+            cantidad_str = "Sin Stock" if pt.cantidad == 0 else str(pt.cantidad)
+            parts.append(f"{pt.talla} ({cantidad_str})")
         return " ; ".join(parts)
 
 class ProductoTalla(models.Model):
