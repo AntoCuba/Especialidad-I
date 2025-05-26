@@ -4,11 +4,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
+from proveedores.models import Proveedor
 
 def productos(request):
     productos = Producto.objects.all()
+    proveedores = Proveedor.objects.all()
     low_stock_products = Producto.objects.filter(productotalla__cantidad__lt=2).distinct()
-    return render(request, 'productos.html', {'productos': productos, 'low_stock_products': low_stock_products})
+    return render(request, 'productos.html', {'productos': productos, 'low_stock_products': low_stock_products, 'proveedores': proveedores})
 
 @csrf_exempt
 def agregar_producto(request):
@@ -83,3 +85,4 @@ def eliminar_producto(request, producto_id):
     if request.method == 'POST':
         producto.delete()
         return HttpResponseRedirect(reverse('productos'))
+    
