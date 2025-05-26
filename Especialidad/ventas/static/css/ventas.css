@@ -23,8 +23,20 @@ button.disabled img {
     margin-bottom: 20px;
 }
 
-#myTable th, #myTable td {
-    vertical-align: middle;
+#myTable tbody tr td:last-child a,
+#myTable tbody tr td:last-child button {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+#myTable tbody tr td:last-child {
+    border-bottom: 1px solid #dee2e6 !important;
+    display: flex !important;
+    gap: 5px !important;
+    align-items: center !important;
 }
 
 @media (max-width: 768px) {

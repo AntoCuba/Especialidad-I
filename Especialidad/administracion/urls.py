@@ -8,6 +8,7 @@ urlpatterns=[
     path('usuarios/eliminar/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('usuarios/editar/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('historial/', views.historial_actividades, name='historial_actividades'),
+    path('api/activity_logs/', views.api_activity_logs, name='api_activity_logs'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),

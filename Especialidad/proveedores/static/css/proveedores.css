@@ -35,7 +35,12 @@ td a.btn-ver-proveedor img {
 }
 
 td > * {
-  font-size: 0;
+  font-size: initial;
+}
+
+td, th {
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
 }
 
 td > * > img {

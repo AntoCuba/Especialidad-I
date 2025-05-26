@@ -4,6 +4,7 @@ from .models import Proveedor
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from administracion.models import ActivityLog
 from django.core.paginator import Paginator
 
 def listar_proveedores(request):
@@ -30,6 +31,12 @@ def agregar_proveedor(request):
             url_imagen=url_imagen,
             descripcion=descripcion
         )
+        ActivityLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            action='add_proveedor',
+            description=f'Proveedor {nombre} creado.'
+        )
+
         return HttpResponseRedirect(reverse('listar_proveedores'))
 
 @csrf_exempt
@@ -44,12 +51,24 @@ def editar_proveedor(request, proveedor_id):
         proveedor.url_imagen = request.POST.get('url_imagen')
         proveedor.descripcion = request.POST.get('descripcion', '')
         proveedor.save()
+        ActivityLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            action='edit_proveedor',
+            description=f'Proveedor {proveedor.nombre} editado.'
+        )
+
         return HttpResponseRedirect(reverse('listar_proveedores'))
 
 @csrf_exempt
 def eliminar_proveedor(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)
     if request.method == 'POST':
+        nombre = proveedor.nombre
         proveedor.delete()
+        ActivityLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            action='delete_proveedor',
+            description=f'Proveedor {nombre} eliminado.'
+        )
         return HttpResponseRedirect(reverse('listar_proveedores'))
 
