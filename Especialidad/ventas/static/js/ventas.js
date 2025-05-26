@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Rellenar campos del modal de ver 
     document.querySelectorAll(".btn-ver-venta").forEach(btn => {
         btn.addEventListener("click", function () {
-            document.getElementById("verIdPedido").value = this.dataset.id_pedido;
+            document.getElementById("verIdPedido").value = `${this.dataset.nombre_producto} (${this.dataset.id_pedido})`;
             document.getElementById("verNombreCliente").value = this.dataset.nombre_cliente;
             document.getElementById("verTalla").value = this.dataset.talla;
             document.getElementById("verDireccion").value = this.dataset.direccion;
@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("editarTelefono").value = this.dataset.telefono;
             document.getElementById("editarMontoTotal").value = this.dataset.monto_total;
             document.getElementById("editarEstadoEnvio").value = this.dataset.estado_envio;
+            document.getElementById("editarRegion").value = this.dataset.region;
             document.getElementById("formEditarVenta").action = `/ventas/editar/${this.dataset.id}/`;
 
             const selectedProductoId = this.dataset.id_pedido;

@@ -18,16 +18,24 @@ def agregar_producto(request):
         numero_orden = request.POST.get('numero_orden')
         valor_producto_unidad = request.POST.get('valor_producto_unidad')
         numero_tracking = request.POST.get('numero_tracking')
-        proveedor = request.POST.get('proveedor')
+        proveedor_id = request.POST.get('proveedor')
         precio_venta = request.POST.get('precio_venta')
         boleta_factura = request.FILES.get('boleta_factura')
+
+        proveedor_fk = None
+        if proveedor_id:
+            from proveedores.models import Proveedor
+            try:
+                proveedor_fk = Proveedor.objects.get(id=proveedor_id)
+            except Proveedor.DoesNotExist:
+                proveedor_fk = None
 
         producto = Producto.objects.create(
             nombre_producto=nombre_producto,
             numero_orden=numero_orden,
             valor_producto_unidad=valor_producto_unidad,
             numero_tracking=numero_tracking,
-            proveedor=proveedor,
+            proveedor_fk=proveedor_fk,
             precio_venta=precio_venta,
             boleta_factura=boleta_factura
         )
@@ -60,7 +68,14 @@ def editar_producto(request, producto_id):
         producto.numero_orden = request.POST.get('numero_orden')
         producto.valor_producto_unidad = request.POST.get('valor_producto_unidad')
         producto.numero_tracking = request.POST.get('numero_tracking')
-        producto.proveedor = request.POST.get('proveedor')
+        proveedor_id = request.POST.get('proveedor')
+        proveedor_fk = None
+        if proveedor_id:
+            try:
+                proveedor_fk = Proveedor.objects.get(id=proveedor_id)
+            except Proveedor.DoesNotExist:
+                proveedor_fk = None
+        producto.proveedor_fk = proveedor_fk
         producto.precio_venta = request.POST.get('precio_venta')
         boleta_factura = request.FILES.get('boleta_factura')
         if boleta_factura:
