@@ -30,21 +30,89 @@ td > a img, td > form > button img {
     border-bottom: none !important;
 }
 
-.tallas-cantidades-list table tr td {
-    border-bottom: 1px solid #dee2e6;
-}
-
 .tallas-cantidades-list table {
-    border: none !important;
-    border-spacing: 0 !important;
+    border: 1px solid #e0e0e0 !important;
+    border-spacing: 0;
+    width: 100%;
+    border-collapse: separate;
 }
 
 .tallas-cantidades-list table tr td {
-    padding: 4px 20px !important; 
+    border-bottom: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    padding: 8px 16px !important;
     margin: 0 !important;
     white-space: nowrap;
-    vertical-align: bottom !important;
+    vertical-align: middle !important;
+    text-align: left;
 }
+
+.tallas-cantidades-list table tr td:nth-child(2) {
+    text-align: left;
+}
+
+#verTallasCantidadesTable {
+    width: auto;
+    margin-top: 8px;
+    margin-right: auto;
+    border: 1px solid #e0e0e0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#verTallasCantidadesTable th {
+    background-color: #f8f9fa;
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#verTallasCantidadesTable th:nth-child(2) {
+    text-align: left;
+}
+
+#verTallasCantidadesTable td {
+    padding: 8px 16px;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#verTallasCantidadesTable td:nth-child(2) {
+    text-align: left;
+}
+
+#verTallasCantidadesTable tr:last-child td {
+    border-bottom: none;
+}
+
+#verTallasCantidadesContainer {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 4px;
+    margin: 15px 0;
+    clear: both;
+    order: 1;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body .mb-3:nth-child(1) {
+    order: 0;
+}
+
+.modal-body .mb-3:nth-child(2) {
+    order: 1;
+}
+
+.modal-body .mb-3:nth-child(3) {
+    order: 2;
+}
+
+
 
 td:last-child {
     display: flex !important;

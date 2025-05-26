@@ -90,3 +90,26 @@ th, td {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+#agregarProductoModal input[type=number]::-webkit-inner-spin-button,
+#agregarProductoModal input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#agregarProductoModal input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.talla-cantidad-row input {
+  flex: 1;
+}
+
+.btn-remove-talla {
+  width: 38px;
+}

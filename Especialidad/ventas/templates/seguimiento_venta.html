@@ -1,22 +1,22 @@
 {% extends 'layout.html' %}
 {% load static %}
-{% block title %}Seguimiento Pedido{% endblock %}
+{% block title %}Seguimiento Venta{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'ventas/css/seguimiento.css' %}">
 {% endblock %}
 
 {% block content %}
-<h1>Seguimiento de Pedido</h1>
+<h1>Seguimiento de Venta</h1>
 
 <form method="get" action="{% url 'seguimiento_venta' %}" class="mb-4">
-    <label for="id_pedido" class="form-label">Ingrese ID del pedido:</label>
-    <input type="number" name="id_pedido" id="id_pedido" required value="{{ request.GET.id_pedido }}" class="form-control" style="max-width: 300px;">
+    <label for="id_venta" class="form-label">Ingrese ID de la venta:</label>
+    <input type="number" name="id_venta" id="id_venta" required value="{{ request.GET.id_venta }}" class="form-control" style="max-width: 300px;">
     <button type="submit" class="btn btn-primary mt-2">Buscar</button>
 </form>
 
 {% if venta %}
-    <h2>Pedido #{{ venta.id_pedido }} - {{ venta.nombre_cliente }}</h2>
+    <h2>Venta #{{ venta.id }} - {{ venta.nombre_cliente }}</h2>
 
     <div class="timeline d-flex align-items-center mb-4">
     {% for estado_code, estado_nombre in estados_envio %}
@@ -59,9 +59,9 @@
         </span></h3>
     </div>
 
-{% elif request.GET.id_pedido %}
+{% elif request.GET.id_venta %}
     <div class="alert alert-warning" role="alert">
-        No se encontró ningún pedido con el ID {{ request.GET.id_pedido }}
+        No se encontró ninguna venta con el ID {{ request.GET.id_venta }}
     </div>
 {% endif %}
 {% endblock %}

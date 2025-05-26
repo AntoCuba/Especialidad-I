@@ -17,7 +17,9 @@
   </div>
   {% if user.is_superuser or user.position == "Administrador" %}
   <div>
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
+    
+    <button type="button" class="btn btn-success" id="btnAgregarProducto" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
+
       Agregar
     </button>
   </div>
@@ -28,13 +30,14 @@
   aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="formAgregarProducto" method="post" action="{% url 'agregar_producto' %}" enctype="multipart/form-data">
+      <form id="formAgregarProducto" method="post" action="{% url 'agregar_producto' %}" enctype="multipart/form-data" data-agregar-url="{% url 'agregar_producto' %}">
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title" id="agregarProductoModalLabel">Agregar Producto</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
+          <input type="hidden" id="productoIdHidden" name="producto_id" value="" />
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
@@ -92,7 +95,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Agregar</button>
+          <button type="submit" class="btn btn-primary" id="submitButton">Agregar</button>
         </div>
       </form>
     </div>
@@ -104,7 +107,6 @@
     <div class="col-12">
       <div class="table-responsive">
         <table id="myTable" class="table row-border">
-          <thead>
             <tr>
               <th>Nombre producto</th>
               <th>Precio compra</th>
@@ -113,6 +115,8 @@
               <th>Acciones</th>
             </tr>
           </thead>
+
+
           <tbody>
             {% for producto in productos %}
             <tr>
@@ -121,39 +125,52 @@
               <td>${{ producto.precio_venta }}</td>
               <td class="tallas-cantidades-list">
                 {% if producto.productotalla_set.count > 0 %}
-                {{ producto.get_tallas_cantidades_str }}
+                  {% for pt in producto.productotalla_set.all %}
+                    {{ pt.talla }} ({{ pt.cantidad }}){% if not forloop.last %}; {% endif %}
+                  {% endfor %}
                 {% else %}
-                No hay tallas
+                <span class="text-muted">No hay tallas</span>
                 {% endif %}
               </td>
+
               <td>
                 {% if user.is_superuser or user.position == "Administrador" %}
-                <a href="#" class="btn-ver-producto" data-bs-toggle="modal" data-bs-target="#verProductoModal"
-                  data-id="{{ producto.id }}" data-nombre="{{ producto.nombre_producto }}"
-                  data-valorproductounidad="{{ producto.valor_producto_unidad }}"
-                  data-precioventa="{{ producto.precio_venta }}" data-numeroorden="{{ producto.numero_orden }}"
-                  data-numerotracking="{{ producto.numero_tracking }}" data-proveedor="{{ producto.proveedor }}"
-                  data-boleta_factura="{% if producto.boleta_factura %}{{ producto.boleta_factura.url }}{% else %}{% endif %}"
-                  data-tallas='[{% for pt in producto.productotalla_set.all %}"{{ pt.talla }}"{% if not forloop.last %}, {% endif %}{% endfor %}]'
-                  data-cantidades='[{% for pt in producto.productotalla_set.all %}{{ pt.cantidad }}{% if not forloop.last %}, {% endif %}{% endfor %}]'
-                  style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
-                  <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver producto"
-                    style="height: 20px; width: 20px;">
-                </a>
-                <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarProductoModal"
-                  data-id="{{ producto.id }}" data-nombre="{{ producto.nombre_producto|escape }}"
-                  data-valorproductounidad="{{ producto.valor_producto_unidad|escape }}"
-                  data-precioventa="{{ producto.precio_venta|escape }}"
-                  data-numeroorden="{{ producto.numero_orden|escape }}"
-                  data-numerotracking="{{ producto.numero_tracking|escape }}"
-                  data-proveedor="{{ producto.proveedor|escape }}"
-                  data-boleta_factura="{% if producto.boleta_factura %}{{ producto.boleta_factura.url|escape }}{% else %}{% endif %}"
-                  data-tallas='[{% for pt in producto.productotalla_set.all %}"{{ pt.talla|escape }}"{% if not forloop.last %}, {% endif %}{% endfor %}]'
-                  data-cantidades='[{% for pt in producto.productotalla_set.all %}{{ pt.cantidad }}{% if not forloop.last %}, {% endif %}{% endfor %}]'
-                  style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
-                  <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar"
-                    style="height: 20px; width: 20px;">
-                </a>
+                  <a href="#" class="btn-ver-producto" data-bs-toggle="modal" data-bs-target="#verProductoModal"
+                    data-id="{{ producto.id }}" data-nombre="{{ producto.nombre_producto }}"
+                    data-valorproductounidad="{{ producto.valor_producto_unidad }}" data-precioventa="{{ producto.precio_venta }}" data-numeroorden="{{ producto.numero_orden }}"
+                    {% if producto.proveedor_fk %}
+                      data-proveedor="{{ producto.proveedor_fk.id }}"
+                      data-proveedor-nombre="{{ producto.proveedor_fk.nombre }}"
+                    {% else %}
+                      data-proveedor=""
+                      data-proveedor-nombre=""
+                    {% endif %}
+                    data-numerotracking="{{ producto.numero_tracking }}" data-proveedor="{{ producto.proveedor }}"
+                    data-boleta_factura="{% if producto.boleta_factura %}{{ producto.boleta_factura.url }}{% else %}{% endif %}"
+                    data-tallas='[{% for pt in producto.productotalla_set.all %}"{{ pt.talla }}"{% if not forloop.last %}, {% endif %}{% endfor %}]'
+                    data-cantidades='[{% for pt in producto.productotalla_set.all %}{{ pt.cantidad }}{% if not forloop.last %}, {% endif %}{% endfor %}]'
+                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/eye-svgrepo-com.svg' %}" alt="Ver producto"
+                      style="height: 20px; width: 20px;">
+                  </a>
+                  <a href="#" class="btn-editar" data-bs-toggle="modal" data-bs-target="#agregarProductoModal"
+                    data-id="{{ producto.id }}" data-nombre="{{ producto.nombre_producto|escape }}"
+                    data-valorproductounidad="{{ producto.valor_producto_unidad|default_if_none:'0'|escape }}"
+                    data-precioventa="{{ producto.precio_venta|default_if_none:'0'|escape }}"
+                    data-numeroorden="{{ producto.numero_orden|escape }}"
+                    data-numerotracking="{{ producto.numero_tracking|escape }}"
+                    {% if producto.proveedor_fk %}
+                      data-proveedor="{{ producto.proveedor_fk.id }}"
+                    {% else %}
+                      data-proveedor=""
+                    {% endif %}
+                    data-tallas='[{% for pt in producto.productotalla_set.all %}"{{ pt.talla }}"{% if not forloop.last %}, {% endif %}{% endfor %}]'
+                    data-cantidades='[{% for pt in producto.productotalla_set.all %}{{ pt.cantidad }}{% if not forloop.last %}, {% endif %}{% endfor %}]'
+                    data-boleta_factura="{% if producto.boleta_factura %}{{ producto.boleta_factura.url|escape }}{% else %}{% endif %}"
+                    style="color: inherit; background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar"
+                      style="height: 20px; width: 20px;">
+                  </a>
                 <form method="post" action="{% url 'eliminar_producto' producto.id %}" style="display:inline;"
                   onsubmit="return confirm('¿Estás seguro de eliminar este producto?');">
                   {% csrf_token %}
@@ -190,7 +207,6 @@
   </div>
 </div>
 
-
 <div class="modal fade" id="verProductoModal" tabindex="-1" aria-labelledby="verProductoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
@@ -216,26 +232,12 @@
                 <input type="text" class="form-control" id="verNumeroTracking" name="numero_tracking" readonly />
               </div>
               <div class="mb-3">
-                <label for="verCantidad" class="form-label">Cantidad</label>
-                <input type="number" class="form-control" id="verCantidad" name="cantidad" readonly
-                  style="display:none;" />
-                <div id="verTallasCantidadesContainer" class="tallas-cantidades-list">
-                  <table class="table table-sm mb-0" id="verTallasCantidadesTable">
-                    <thead>
-                      <tr>
-                        <th>Talla</th>
-                        <th>Cantidad</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                  </table>
-                </div>
+                <label for="verPrecioVenta" class="form-label">Precio de venta</label>
+                <input type="text" class="form-control" id="verPrecioVenta" name="precio_venta" readonly />
               </div>
               <div class="mb-3">
-                <label for="verPrecioVenta" class="form-label">Precio de venta estimado</label>
-                <input type="text" class="form-control" id="verPrecioVenta" name="precio_venta" readonly />
+                <label for="verBoletaFactura" class="form-label">Boleta / Factura</label>
+                <div id="verBoletaFactura" name="boleta_factura"></div>
               </div>
             </div>
             <div class="col-md-6">
@@ -244,16 +246,21 @@
                 <input type="text" class="form-control" id="verNumeroOrden" name="numero_orden" readonly />
               </div>
               <div class="mb-3">
-                <label for="verTalla" class="form-label" style="display:none;">Talla</label>
-                <input type="text" class="form-control" id="verTalla" name="talla" readonly style="display:none;" />
-              </div>
-              <div class="mb-3">
                 <label for="verProveedor" class="form-label">Proveedor</label>
                 <input type="text" class="form-control" id="verProveedor" name="proveedor" readonly />
               </div>
               <div class="mb-3">
-                <label for="verBoletaFactura" class="form-label">Boleta / Factura</label>
-                <div id="verBoletaFactura" name="boleta_factura"></div>
+                <label class="form-label">Tallas y Cantidades</label>
+                <table id="verTallasCantidadesTable" class="table table-sm table-bordered mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Talla</th>
+                      <th>Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -266,73 +273,6 @@
   </div>
 </div>
 
-
-<div class="modal fade" id="editarProductoModal" tabindex="-1" aria-labelledby="editarProductoModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <form id="formEditarProducto" method="post" enctype="multipart/form-data" action="/inventario/editar/0/">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title" id="editarProductoModalLabel">Editar Producto</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="editarProductoId" name="producto_id" />
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label for="editarNombreProducto" class="form-label">Nombre producto</label>
-                <input type="text" class="form-control" id="editarNombreProducto" name="nombre_producto" maxlength="100"
-                  required />
-              </div>
-              <div class="mb-3">
-                <label for="editarValorProductoUnidad" class="form-label">Valor del producto (unidad)</label>
-                <input type="number" step="0.01" class="form-control" id="editarValorProductoUnidad"
-                  name="valor_producto_unidad" />
-              </div>
-              <div class="mb-3">
-                <label for="editarNumeroTracking" class="form-label">Número de tracking</label>
-                <input type="text" class="form-control" id="editarNumeroTracking" name="numero_tracking"
-                  maxlength="100" />
-              </div>
-              <div class="mb-3">
-                <label for="editarPrecioVenta" class="form-label">Precio de venta estimado</label>
-                <input type="number" step="0.01" class="form-control" id="editarPrecioVenta" name="precio_venta"
-                  required />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div id="editarTallasContainer" class="mb-3">
-                <label class="form-label">Tallas y Cantidades</label>
-              </div>
-              <button type="button" class="btn btn-secondary mb-3" id="addEditarTallaBtn">Agregar otra talla</button>
-              <div class="mb-3">
-                <label for="editarNumeroOrden" class="form-label">Número de orden</label>
-                <input type="text" class="form-control" id="editarNumeroOrden" name="numero_orden" maxlength="50" />
-              </div>
-              <div class="mb-3">
-                <label for="editarProveedor" class="form-label">Proveedor</label>
-                <input type="text" class="form-control" id="editarProveedor" name="proveedor" maxlength="100" />
-              </div>
-              <div class="mb-3">
-                <label for="editarBoletaFactura" class="form-label">Boleta / Factura</label>
-                <input type="file" class="form-control" id="editarBoletaFactura" name="boleta_factura" />
-                <div id="editarBoletaFacturaExistente" class="mt-2"></div>
-              </div>
-            </div>
-          </div>
-          <div id="formEditarErrors" class="text-danger"></div>
-          <div id="formEditarSuccess" class="text-success"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar cambios</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
   crossorigin="anonymous"></script>

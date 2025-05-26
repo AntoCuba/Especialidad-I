@@ -29,11 +29,11 @@ REGIONES = [
 ]
 
 class Venta(models.Model):
-    id_pedido = models.PositiveIntegerField(unique=True,null=False, verbose_name="ID del Pedido")
+    id_venta = models.PositiveIntegerField(unique=True, blank=True, null=True) 
     id_pedido = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="ID del Pedido")
     talla = models.ForeignKey(ProductoTalla, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Talla")
     nombre_cliente = models.CharField(max_length=100)
-    direccion = models.CharField(max_length=255, verbose_name="Dirección")
+    direccion = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=254, validators=[EmailValidator()], verbose_name="Correo Electrónico")
     telefono = models.CharField(
         max_length=20,

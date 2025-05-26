@@ -5,12 +5,13 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomUserChangeForm, EmailAuthenticationForm
 from django.http import JsonResponse, HttpResponseForbidden
-from django.db import models
 from inventario.models import Producto, ProductoTalla
-from django.db.models import Sum, F, Q
-from django.core.serializers import serialize
-from django.utils.timezone import localtime
-from django.contrib.auth import login, logout
+from proveedores.models import Proveedor
+from django.db.models import Sum
+from django.utils.timezone import localtime, now
+from ventas.models import Venta
+from django.db.models.functions import ExtractMonth
+import json
 
 @login_required
 def usuario_view(request):
@@ -128,10 +129,30 @@ def dashboard(request):
     users_activos = Usuario.objects.filter(is_active=True).count()
     productos_bajo_stock = ProductoTalla.objects.filter(cantidad__lt=3).select_related('producto')
 
+    ventas_en_proceso_count = Venta.objects.filter(estado_envio='proceso').count()
+    current_year = now().year
+    monthly_sales = (
+        Venta.objects
+        .filter(fecha_compra__year=current_year)
+        .exclude(estado_envio='cancelado')
+        .annotate(month=ExtractMonth('fecha_compra'))
+        .values('month')
+        .annotate(total=Sum('monto_total'))
+        .order_by('month')
+    )
+    ventas_mensuales = [0] * 12
+    for entry in monthly_sales:
+        month_index = entry['month'] - 1
+        ventas_mensuales[month_index] = float(entry['total'])
+
+    proveedores = Proveedor.objects.all()
     context = {
         'total_stock': total_stock,
         'users_activos': users_activos,
         'productos_bajo_stock': productos_bajo_stock,
+        'pedidos_pendientes_total': ventas_en_proceso_count,
+        'ventas_mensuales': json.dumps(ventas_mensuales),
+        'proveedores': proveedores,
     }
     return render(request, 'dashboard.html', context)
 
