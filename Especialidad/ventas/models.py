@@ -29,6 +29,7 @@ REGIONES = [
 ]
 
 class Venta(models.Model):
+    id_pedido = models.PositiveIntegerField(unique=True,null=False, verbose_name="ID del Pedido")
     id_pedido = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="ID del Pedido")
     talla = models.ForeignKey(ProductoTalla, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Talla")
     nombre_cliente = models.CharField(max_length=100)
@@ -46,3 +47,4 @@ class Venta(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.id_pedido} - {self.nombre_cliente}"
+

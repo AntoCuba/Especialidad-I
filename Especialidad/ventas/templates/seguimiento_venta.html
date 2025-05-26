@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}Seguimiento Pedido{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ventas/css/seguimiento.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Seguimiento de Pedido</h1>
+
+<form method="get" action="{% url 'seguimiento_venta' %}" class="mb-4">
+    <label for="id_pedido" class="form-label">Ingrese ID del pedido:</label>
+    <input type="number" name="id_pedido" id="id_pedido" required value="{{ request.GET.id_pedido }}" class="form-control" style="max-width: 300px;">
+    <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+</form>
+
+{% if venta %}
+    <h2>Pedido #{{ venta.id_pedido }} - {{ venta.nombre_cliente }}</h2>
+
+    <div class="timeline d-flex align-items-center mb-4">
+    {% for estado_code, estado_nombre in estados_envio %}
+        <div class="step {% if estado_code in completadas %}completed{% endif %} text-center me-3">
+            <div class="icon">
+                {% if venta.estado_envio == 'cancelado' %}
+                    <i class="fas fa-times-circle text-danger"></i>
+                {% else %}
+                    {% if estado_code in completadas %}
+                        <i class="fas fa-check-circle text-success"></i>
+                    {% else %}
+                        <i class="far fa-circle text-secondary"></i>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="label mt-1">{{ estado_nombre }}</div>
+        </div>
+        {% if not forloop.last %}
+            <div class="bar flex-grow-1 border-top
+                {% if estado_code in completadas %}
+                    bg-success
+                {% else %}
+                    bg-secondary
+                {% endif %}
+                mx-2">
+            </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+
+    <div class="details">
+        <h3>Estado actual: <span class="badge 
+            {% if venta.estado_envio == 'cancelado' %}bg-danger
+            {% elif venta.estado_envio == 'entregado' %}bg-success
+            {% elif venta.estado_envio == 'enviado' %}bg-info
+            {% else %}bg-warning
+            {% endif %}
+        ">
+            {{ venta.get_estado_envio_display }}
+        </span></h3>
+    </div>
+
+{% elif request.GET.id_pedido %}
+    <div class="alert alert-warning" role="alert">
+        No se encontró ningún pedido con el ID {{ request.GET.id_pedido }}
+    </div>
+{% endif %}
+{% endblock %}

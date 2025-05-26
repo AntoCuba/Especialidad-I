@@ -5,9 +5,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
 <h1 class="text-start mb-5 mt-4 roboto-font">Inventario</h1>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+  crossorigin="anonymous">
 <link href="{% static 'css/productos.css' %}" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+  crossorigin="anonymous"></script>
 
 <div class="d-flex justify-content-between align-items-start mb-3 search-container">
   <div class="d-flex justify-content-start flex-grow-1">
@@ -15,14 +17,17 @@
   </div>
   {% if user.is_superuser or user.position == "Administrador" %}
   <div>
+    
     <button type="button" class="btn btn-success" id="btnAgregarProducto" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
+
       Agregar
     </button>
   </div>
   {% endif %}
 </div>
 
-<div class="modal fade" id="agregarProductoModal" tabindex="-1" aria-labelledby="agregarProductoModalLabel" aria-hidden="true">
+<div class="modal fade" id="agregarProductoModal" tabindex="-1" aria-labelledby="agregarProductoModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <form id="formAgregarProducto" method="post" action="{% url 'agregar_producto' %}" enctype="multipart/form-data" data-agregar-url="{% url 'agregar_producto' %}">
@@ -37,19 +42,23 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="agregarNombreProducto" class="form-label">Nombre producto</label>
-                <input type="text" class="form-control" id="agregarNombreProducto" name="nombre_producto" maxlength="100" required />
+                <input type="text" class="form-control" id="agregarNombreProducto" name="nombre_producto"
+                  maxlength="100" required />
               </div>
               <div class="mb-3">
                 <label for="agregarValorProductoUnidad" class="form-label">Valor del producto (unidad)</label>
-                <input type="number" step="0.01" class="form-control" id="agregarValorProductoUnidad" name="valor_producto_unidad" />
+                <input type="number" step="0.01" class="form-control" id="agregarValorProductoUnidad"
+                  name="valor_producto_unidad" />
               </div>
               <div class="mb-3">
                 <label for="agregarNumeroTracking" class="form-label">Número de tracking</label>
-                <input type="text" class="form-control" id="agregarNumeroTracking" name="numero_tracking" maxlength="100" />
+                <input type="text" class="form-control" id="agregarNumeroTracking" name="numero_tracking"
+                  maxlength="100" />
               </div>
               <div class="mb-3">
                 <label for="agregarPrecioVenta" class="form-label">Precio de venta estimado</label>
-                <input type="number" step="0.01" class="form-control" id="agregarPrecioVenta" name="precio_venta" required />
+                <input type="number" step="0.01" class="form-control" id="agregarPrecioVenta" name="precio_venta"
+                  required />
               </div>
             </div>
             <div class="col-md-6">
@@ -68,7 +77,12 @@
               <button type="button" class="btn btn-secondary mb-3" id="addTallaBtn">Agregar otra talla</button>
               <div class="mb-3">
                 <label for="agregarProveedor" class="form-label">Proveedor</label>
-                <input type="text" class="form-control" id="agregarProveedor" name="proveedor" maxlength="100" />
+                <select class="form-control" id="agregarProveedor" name="proveedor" required>
+                  <option value="" disabled selected>Seleccione un proveedor</option>
+                  {% for proveedor in proveedores %}
+                  <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+                  {% endfor %}
+                </select>
               </div>
               <div class="mb-3">
                 <label for="agregarBoletaFactura" class="form-label">Boleta / Factura</label>
@@ -110,7 +124,7 @@
               <td>${{ producto.precio_venta }}</td>
               <td class="tallas-cantidades-list">
                 {% if producto.productotalla_set.count > 0 %}
-                  {{ producto.get_tallas_cantidades_str }}
+                {{ producto.get_tallas_cantidades_str }}
                 {% else %}
                 No hay tallas
                 {% endif %}
@@ -157,15 +171,22 @@
                   onsubmit="return confirm('¿Estás seguro de eliminar este producto?');">
                   {% csrf_token %}
                   <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
-                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px;">
+                    <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar"
+                      style="height: 20px; width: 20px;">
                   </button>
                 </form>
                 {% else %}
-                <button class="btn-editar disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para editar productos" type="button">
-                  <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar" style="height: 20px; width: 20px; opacity: 0.5;">
+                <button class="btn-editar disabled" disabled
+                  style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;"
+                  title="No tienes permiso para editar productos" type="button">
+                  <img src="{% static 'images/edit-ui-svgrepo-com.svg' %}" alt="Editar"
+                    style="height: 20px; width: 20px; opacity: 0.5;">
                 </button>
-                <button class="btn-link disabled" disabled style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;" title="No tienes permiso para eliminar productos" type="button">
-                  <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar" style="height: 20px; width: 20px; opacity: 0.5;">
+                <button class="btn-link disabled" disabled
+                  style="color: inherit; background: none; border: none; padding: 0; cursor: not-allowed;"
+                  title="No tienes permiso para eliminar productos" type="button">
+                  <img src="{% static 'images/trash-alt-svgrepo-com.svg' %}" alt="Eliminar"
+                    style="height: 20px; width: 20px; opacity: 0.5;">
                 </button>
                 {% endif %}
               </td>
@@ -199,7 +220,8 @@
               </div>
               <div class="mb-3">
                 <label for="verValorProductoUnidad" class="form-label">Valor del producto (unidad)</label>
-                <input type="text" class="form-control" id="verValorProductoUnidad" name="valor_producto_unidad" readonly />
+                <input type="text" class="form-control" id="verValorProductoUnidad" name="valor_producto_unidad"
+                  readonly />
               </div>
               <div class="mb-3">
                 <label for="verNumeroTracking" class="form-label">Número de tracking</label>
@@ -224,6 +246,20 @@
                 <input type="text" class="form-control" id="verProveedor" name="proveedor" readonly />
               </div>
               <div class="mb-3">
+                <label for="verBoletaFactura" class="form-label">Boleta / Factura</label>
+                <div id="verBoletaFactura" name="boleta_factura"></div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
                 <label class="form-label">Tallas y Cantidades</label>
                 <div id="verTallasCantidadesContainer" class="tallas-cantidades-list">
                   <table class="table table-bordered table-sm mb-0" id="verTallasCantidadesTable">
@@ -251,6 +287,9 @@
   </div>
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+  crossorigin="anonymous"></script>
 <script src="{% static 'js/productos.js' %}"></script>
 
 {% endblock %}
