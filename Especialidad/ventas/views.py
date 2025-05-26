@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.http import HttpResponse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.csrf import csrf_exempt
 from administracion.models import ActivityLog
 from django.core.paginator import Paginator
 
@@ -148,19 +149,18 @@ def eliminar_venta(request, venta_id):
 
 
 def seguimiento_venta(request):
-    id_pedido = request.GET.get('id_pedido')
+    id_venta = request.GET.get('id_venta')
 
     venta = None
     completadas = []
 
-    if id_pedido:
+    if id_venta:
         try:
-            id_pedido_int = int(id_pedido)
-            print(f"[DEBUG] ID del pedido recibido: {id_pedido_int}") 
+            id_venta_int = int(id_venta)
 
-            venta = Venta.objects.get(id_pedido=id_pedido_int)
+            venta = Venta.objects.get(id=id_venta_int)
+
             estado_actual = venta.estado_envio
-
             valores_estados = [v for v, l in ESTADOS_ENVIO]
 
             if estado_actual == 'cancelado':
@@ -170,10 +170,10 @@ def seguimiento_venta(request):
                 completadas = valores_estados[:index_actual + 1]
 
         except ValueError:
-            print("[ERROR] ID del pedido no es un número válido.")
+            print("[ERROR] ID de la venta no es un número válido.")
             venta = None
         except Venta.DoesNotExist:
-            print(f"[ERROR] No se encontró venta con ID de pedido: {id_pedido}")
+            print(f"[ERROR] No se encontró venta con ID: {id_venta}")
             venta = None
 
     context = {

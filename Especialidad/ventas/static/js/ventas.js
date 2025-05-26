@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".btn-ver-venta").forEach(btn => {
         btn.addEventListener("click", function () {
             document.getElementById("verIdPedido").value = this.dataset.id_pedido;
+            document.getElementById("verNumeroOrden").value = this.dataset.numero_orden;
             document.getElementById("verNombreCliente").value = this.dataset.nombre_cliente;
             document.getElementById("verTalla").value = this.dataset.talla;
             document.getElementById("verDireccion").value = this.dataset.direccion;
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", function () {
             document.getElementById("editarId").value = this.dataset.id;
             document.getElementById("editarIdPedido").value = this.dataset.id_pedido;
+            document.getElementById("editarNumeroOrden").value = this.dataset.numero_orden;
             document.getElementById("editarNombreCliente").value = this.dataset.nombre_cliente;
             document.getElementById("editarDireccion").value = this.dataset.direccion;
             document.getElementById("editarEmail").value = this.dataset.email;
