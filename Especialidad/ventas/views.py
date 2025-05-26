@@ -8,6 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from administracion.models import ActivityLog
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Listar todas las ventas
