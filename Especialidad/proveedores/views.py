@@ -5,8 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from administracion.models import ActivityLog
+from django.core.paginator import Paginator
 
-# Create your views here.
 def listar_proveedores(request):
     proveedores = Proveedor.objects.all()
     return render(request, 'listar_proveedores.html', {'proveedores': proveedores})
@@ -18,6 +18,8 @@ def agregar_proveedor(request):
         producto = request.POST.get('producto')
         autenticacion = request.POST.get('autenticacion', 'off') == 'on'  
         tiempo_envio = request.POST.get('tiempo_envio')
+        url_pagina = request.POST.get('url_pagina')
+        url_imagen = request.POST.get('url_imagen')
         descripcion = request.POST.get('descripcion', '')
 
         Proveedor.objects.create(
@@ -25,6 +27,8 @@ def agregar_proveedor(request):
             producto=producto,
             autenticacion=autenticacion,
             tiempo_envio=tiempo_envio,
+            url_pagina=url_pagina,
+            url_imagen=url_imagen,
             descripcion=descripcion
         )
         ActivityLog.objects.create(
@@ -43,6 +47,8 @@ def editar_proveedor(request, proveedor_id):
         proveedor.producto = request.POST.get('producto')
         proveedor.autenticacion = request.POST.get('autenticacion', 'off') == 'on'
         proveedor.tiempo_envio = request.POST.get('tiempo_envio')
+        proveedor.url_pagina = request.POST.get('url_pagina')
+        proveedor.url_imagen = request.POST.get('url_imagen')
         proveedor.descripcion = request.POST.get('descripcion', '')
         proveedor.save()
         ActivityLog.objects.create(
@@ -65,3 +71,4 @@ def eliminar_proveedor(request, proveedor_id):
             description=f'Proveedor {nombre} eliminado.'
         )
         return HttpResponseRedirect(reverse('listar_proveedores'))
+
