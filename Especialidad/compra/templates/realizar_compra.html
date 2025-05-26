@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/compra.css' %}">
+
+<div class="main_products_shop">
+    <span>{{ proveedores }}</span>
+    <h1>Comprar productos</h1>
+    <div class="content_box_cards">
+        {% for proveedor in page_obj %}
+        <a href="{%if proveedor.url_pagina %} {{ proveedor.url_pagina }} {% else %} # {% endif %}">
+            <div class="card_compra">
+                <div class="photo_box">
+                    <picture>
+                        <img src="{{ proveedor.url_imagen }}">
+                    </picture>
+                </div>
+                <div class="info_card">
+                    <h4>
+                        {{proveedor.nombre}}
+                    </h4>
+                    <p>
+                        {{proveedor.producto}}
+                    </p>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <p>no hay proveedores</p>
+        {% endfor %}
+    </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"> < </a>
+            {% endif %}
+            <span class="current">
+                Pág. {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"> > </a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,4 +1,18 @@
 
+td:last-child {
+  display: flex !important;
+  gap: 5px !important;
+  align-items: center !important;
+}
+
+td:last-child > * {
+  border: none !important;
+  box-shadow: none !important;
+  background: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 td form {
   display: inline-block;
   margin: 0 8px 0 0;
@@ -21,7 +35,12 @@ td a.btn-ver-proveedor img {
 }
 
 td > * {
-  font-size: 0;
+  font-size: initial;
+}
+
+td, th {
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
 }
 
 td > * > img {

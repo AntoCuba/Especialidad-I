@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'inventario',
     'proveedores',
     'ventas',
+    'compra',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'Especialidad',
         'USER': 'postgres',
-        'PASSWORD': '12345',
+        'PASSWORD': 'shompy',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -113,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
