@@ -8,7 +8,7 @@ ESTADOS_ENVIO = [
 ]
 
 class Venta(models.Model):
-    id_pedido = models.PositiveIntegerField(unique=True,null=True, verbose_name="ID del Pedido")
+    id_pedido = models.PositiveIntegerField(unique=True,null=False, verbose_name="ID del Pedido")
     nombre_cliente = models.CharField(max_length=100)
     monto_total = models.DecimalField(max_digits=10, decimal_places=2)
     estado_envio = models.CharField(max_length=10, choices=ESTADOS_ENVIO)
@@ -16,3 +16,4 @@ class Venta(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.id_pedido} - {self.nombre_cliente}"
+

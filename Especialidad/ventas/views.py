@@ -3,6 +3,9 @@ from .models import Venta, ESTADOS_ENVIO
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.http import HttpResponse
+
+
 
 # Listar todas las ventas
 def listar_ventas(request):
@@ -13,9 +16,13 @@ def listar_ventas(request):
 @csrf_exempt
 def agregar_venta(request):
     if request.method == 'POST':
-        id_pedido = request.POST.get('id_pedido')
+        try:
+            id_pedido = int(request.POST.get('id_pedido'))
+            monto_total = float(request.POST.get('monto_total'))
+        except (ValueError, TypeError):
+            return HttpResponse("Datos inválidos", status=400)
+
         nombre_cliente = request.POST.get('nombre_cliente')
-        monto_total = request.POST.get('monto_total')
         estado_envio = request.POST.get('estado_envio')
 
         Venta.objects.create(
@@ -25,6 +32,7 @@ def agregar_venta(request):
             estado_envio=estado_envio
         )
         return HttpResponseRedirect(reverse('listar_ventas'))
+
 
 # Editar una venta existente
 @csrf_exempt
@@ -45,3 +53,41 @@ def eliminar_venta(request, venta_id):
     if request.method == 'POST':
         venta.delete()
         return HttpResponseRedirect(reverse('listar_ventas'))
+
+
+def seguimiento_venta(request):
+    id_pedido = request.GET.get('id_pedido')
+
+    venta = None
+    completadas = []
+
+    if id_pedido:
+        try:
+            id_pedido_int = int(id_pedido)
+            print(f"[DEBUG] ID del pedido recibido: {id_pedido_int}") 
+
+            venta = Venta.objects.get(id_pedido=id_pedido_int)
+            estado_actual = venta.estado_envio
+
+            valores_estados = [v for v, l in ESTADOS_ENVIO]
+
+            if estado_actual == 'cancelado':
+                completadas = []
+            else:
+                index_actual = valores_estados.index(estado_actual)
+                completadas = valores_estados[:index_actual + 1]
+
+        except ValueError:
+            print("[ERROR] ID del pedido no es un número válido.")
+            venta = None
+        except Venta.DoesNotExist:
+            print(f"[ERROR] No se encontró venta con ID de pedido: {id_pedido}")
+            venta = None
+
+    context = {
+        'venta': venta,
+        'completadas': completadas,
+        'estados_envio': ESTADOS_ENVIO
+    }
+
+    return render(request, 'seguimiento_venta.html', context)
