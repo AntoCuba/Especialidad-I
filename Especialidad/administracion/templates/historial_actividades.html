@@ -12,8 +12,6 @@
 
 <div class="container-fluid px-4">
     <h1 class="titulo-historial mb-4">Historial de Actividades</h1>
-    <button class="btn btn-primary">Botón de prueba, no pescar</button>
-    <i class="fas fa-check-circle text-success"></i>
 
     <!--texto superior -->
     <div class="timeline-label-top">
@@ -29,29 +27,7 @@
         </div>
 
         <!--contenido-->
-        <div class="timeline-scroll-container">
-            <!--ejemplos (reemplazar depues) -->
-            <div class="timeline-item">
-                <div class="timeline-icon add">
-                    <i class="fas fa-plus-circle"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="timeline-date">26 Marzo - 14:32</div>
-                    <div class="timeline-user">Antonia Cuba</div>
-                    <div class="timeline-action">Agregó un Producto</div>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-icon edit">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="timeline-date">24 Marzo - 18:49</div>
-                    <div class="timeline-user">Benjamin Osses</div>
-                    <div class="timeline-action">Editó un Producto</div>
-                </div>
-            </div>
+        <div class="timeline-scroll-container" id="timeline-container">
         </div>
     </div>
 
@@ -60,4 +36,17 @@
         <span>Más Antiguo</span>
     </div>
 </div>
+
+<script>
+    const apiActivityLogsUrl = "{% url 'api_activity_logs' %}";
+    const iconImages = {
+        edit: "{% static 'images/edit-ui-svgrepo-com.svg' %}",
+        delete: "{% static 'images/trash-alt-svgrepo-com.svg' %}",
+        add: "{% static 'images/add-ellipse-svgrepo-com.svg' %}",
+        login: "{% static 'images/login-svgrepo-com.svg' %}",
+        logout: "{% static 'images/logout-svgrepo-com.svg' %}"
+    };
+</script>
+<script src="{% static 'js/historial.js' %}"></script>
+
 {% endblock %}

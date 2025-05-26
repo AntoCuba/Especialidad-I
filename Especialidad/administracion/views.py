@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Usuario
+from .models import Usuario, ActivityLog
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,9 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.db import models
 from inventario.models import Producto, ProductoTalla
 from django.db.models import Sum, F, Q
+from django.core.serializers import serialize
+from django.utils.timezone import localtime
+from django.contrib.auth import login, logout
 
 @login_required
 def usuario_view(request):
@@ -23,6 +26,11 @@ def agregar_usuario(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             usuario = form.save()
+            ActivityLog.objects.create(
+                user=request.user,
+                action='add',
+                description=f'Usuario {usuario.email} creado.'
+            )
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 # Respuesta JSON para AJAX
                 return JsonResponse({
@@ -52,7 +60,13 @@ def eliminar_usuario(request, user_id):
             return HttpResponseForbidden("No tienes permiso para eliminar usuarios.")
     if request.method == 'POST':
         usuario = get_object_or_404(Usuario, id=user_id)
+        email = usuario.email
         usuario.delete()
+        ActivityLog.objects.create(
+            user=request.user,
+            action='delete',
+            description=f'Usuario {email} eliminado.'
+        )
     return redirect('usuarios')
 
 @login_required
@@ -83,6 +97,29 @@ def historial_actividades(request):
     return render(request, 'historial_actividades.html')
 
 @login_required
+def api_activity_logs(request):
+    if request.GET.get('distinct_users'):
+        users = ActivityLog.objects.select_related('user').values_list('user__first_name', 'user__email').distinct()
+        user_list = []
+        for first_name, email in users:
+            user_list.append(first_name or email)
+        return JsonResponse({'users': user_list})
+
+    logs = ActivityLog.objects.select_related('user').all()
+
+    data = []
+    for log in logs:
+        data.append({
+            'user': log.user.first_name or log.user.email,
+            'action': log.get_action_display(),
+            'description': log.description,
+            'timestamp': localtime(log.timestamp).strftime('%d %B - %H:%M'),
+        })
+    return JsonResponse({
+        'logs': data,
+    })
+
+@login_required
 def dashboard(request):
     total_stock = Producto.objects.annotate(
         total_cantidad=Sum('productotalla__cantidad')
@@ -103,5 +140,23 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
     form_class = EmailAuthenticationForm
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        ActivityLog.objects.create(
+            user=self.request.user,
+            action='login',
+            description='Inició sesión'
+        )
+        return response
+
 class CustomLogoutView(LogoutView):
     next_page = reverse_lazy('login')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            ActivityLog.objects.create(
+                user=request.user,
+                action='logout',
+                description='Cerró sesión'
+            )
+        return super().dispatch(request, *args, **kwargs)

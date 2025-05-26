@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from administracion.models import ActivityLog
+from django.core.paginator import Paginator
 
 # Listar todas las ventas
 def listar_ventas(request):
@@ -44,7 +46,7 @@ def agregar_venta(request):
         region = request.POST.get('region')
 
 
-        Venta.objects.create(
+        venta = Venta.objects.create(
             id_pedido_id=id_pedido_id,
             talla_id=talla_id,
             nombre_cliente=nombre_cliente,
@@ -55,6 +57,13 @@ def agregar_venta(request):
             estado_envio=estado_envio,
             region=region,
         )
+
+        ActivityLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            action='add_venta',
+            description=f'Venta para cliente {nombre_cliente} creada.'
+        )
+
         return HttpResponseRedirect(reverse('listar_ventas'))
     else:
         productos = Producto.objects.prefetch_related('productotalla_set').all()
@@ -87,6 +96,13 @@ def editar_venta(request, venta_id):
         venta.monto_total = request.POST.get('monto_total')
         venta.estado_envio = request.POST.get('estado_envio')
         venta.save()
+
+        ActivityLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            action='edit_venta',
+            description=f'Venta para cliente {venta.nombre_cliente} editada.'
+        )
+
         return HttpResponseRedirect(reverse('listar_ventas'))
     else:
         productos = Producto.objects.prefetch_related('productotalla_set').all()
@@ -108,5 +124,11 @@ def editar_venta(request, venta_id):
 def eliminar_venta(request, venta_id):
     venta = get_object_or_404(Venta, pk=venta_id)
     if request.method == 'POST':
+        nombre_cliente = venta.nombre_cliente
         venta.delete()
+        ActivityLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            action='delete_venta',
+            description=f'Venta para cliente {nombre_cliente} eliminada.'
+        )
         return HttpResponseRedirect(reverse('listar_ventas'))
