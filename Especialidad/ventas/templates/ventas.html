@@ -120,8 +120,9 @@
             <thead>
               <tr>
                 <th>ID Venta</th>
-                <th>Número de Orden</th>
+                <th>Producto</th>
                 <th>Nombre Cliente</th>
+
                 <th>Monto Total</th>
                 <th>Estado Envío</th>
                 <th>Fecha Compra</th>
@@ -132,8 +133,9 @@
             {% for venta in ventas %}
             <tr>
                 <td>{{ venta.id }}</td>
-                <td>{{ venta.id_pedido.numero_orden }}</td>
+                <td>{{ venta.id_pedido.nombre_producto }}</td>
                 <td>{{ venta.nombre_cliente }}</td>
+
                 <td>${{ venta.monto_total }}</td>
                 <td>{{ venta.get_estado_envio_display }}</td>
                 <td>{{ venta.fecha_compra|date:"d-m-Y" }}</td>
@@ -141,8 +143,9 @@
                 {% if user.is_superuser or user.position == "Administrador" %}
 <a href="#" class="btn-ver-venta" data-bs-toggle="modal" data-bs-target="#verVentaModal"
     data-id="{{ venta.id }}"
-    data-id_pedido="{{ venta.id_pedido.id }}"
+    data-id_pedido="{{ venta.id_pedido.nombre_producto }}"
     data-numero_orden="{{ venta.id_pedido.numero_orden }}"
+
     data-nombre_cliente="{{ venta.nombre_cliente }}"
     data-talla="{% if venta.talla %}{{ venta.talla.talla }}{% else %}N/A{% endif %}"
     data-direccion="{{ venta.direccion }}"
@@ -210,13 +213,15 @@
           <div class="row">
             <div class="col-md-6">
 <div class="mb-3">
-  <label for="verIdPedido" class="form-label">Producto (Número de Orden)</label>
+  <label for="verIdPedido" class="form-label">Producto</label>
   <input type="text" class="form-control" id="verIdPedido" name="id_pedido" readonly />
 </div>
-              <div class="mb-3">
-                <label for="verNumeroOrden" class="form-label">Número de Orden</label>
-                <input type="text" class="form-control" id="verNumeroOrden" name="numero_orden" readonly />
-              </div>
+<div class="mb-3">
+  <label for="verNumeroOrden" class="form-label">Número de Orden</label>
+  <input type="text" class="form-control" id="verNumeroOrden" name="numero_orden" readonly />
+</div>
+
+
               <div class="mb-3">
                 <label for="verTalla" class="form-label">Talla</label>
                 <input type="text" class="form-control" id="verTalla" name="talla" value="{% if venta.talla %}{{ venta.talla.talla }}{% else %}N/A{% endif %}" readonly />

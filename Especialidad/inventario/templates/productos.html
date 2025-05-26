@@ -107,15 +107,17 @@
     <div class="col-12">
       <div class="table-responsive">
         <table id="myTable" class="table row-border">
-          <thead>
+          <thead class="table-light">
             <tr>
-              <th>Nombre producto</th>
-              <th>Precio compra</th>
-              <th>Precio venta</th>
-              <th>Tallas y Cantidades</th>
-              <th>Acciones</th>
+              <th class="ps-2">Nombre producto</th>
+              <th class="pe-2">Precio compra</th>
+              <th class="pe-2">Precio venta</th>
+              <th class="pe-2">Tallas y Cantidades</th>
+              <th class="pe-2">Acciones</th>
             </tr>
           </thead>
+
+
           <tbody>
             {% for producto in productos %}
             <tr>
@@ -124,11 +126,14 @@
               <td>${{ producto.precio_venta }}</td>
               <td class="tallas-cantidades-list">
                 {% if producto.productotalla_set.count > 0 %}
-                {{ producto.get_tallas_cantidades_str }}
+                  {% for pt in producto.productotalla_set.all %}
+                    {{ pt.talla }} ({{ pt.cantidad }}){% if not forloop.last %}; {% endif %}
+                  {% endfor %}
                 {% else %}
-                No hay tallas
+                <span class="text-muted">No hay tallas</span>
                 {% endif %}
               </td>
+
               <td>
                 {% if user.is_superuser or user.position == "Administrador" %}
                   <a href="#" class="btn-ver-producto" data-bs-toggle="modal" data-bs-target="#verProductoModal"
@@ -246,8 +251,17 @@
                 <input type="text" class="form-control" id="verProveedor" name="proveedor" readonly />
               </div>
               <div class="mb-3">
-                <label for="verBoletaFactura" class="form-label">Boleta / Factura</label>
-                <div id="verBoletaFactura" name="boleta_factura"></div>
+                <label class="form-label">Tallas y Cantidades</label>
+                <table id="verTallasCantidadesTable" class="table table-sm table-bordered mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Talla</th>
+                      <th>Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -255,33 +269,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-                <label class="form-label">Tallas y Cantidades</label>
-                <div id="verTallasCantidadesContainer" class="tallas-cantidades-list">
-                  <table class="table table-bordered table-sm mb-0" id="verTallasCantidadesTable">
-                    <thead>
-                      <tr>
-                        <th>Talla</th>
-                        <th>Cantidad</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
       </div>
     </div>
   </div>
