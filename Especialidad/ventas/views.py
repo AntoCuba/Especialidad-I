@@ -6,6 +6,7 @@ from django.urls import reverse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from administracion.models import ActivityLog
+from django.core.paginator import Paginator
 
 # Listar todas las ventas
 def listar_ventas(request):
