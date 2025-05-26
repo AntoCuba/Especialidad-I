@@ -7,6 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
+
         ('inventario', '__first__'),
         ('ventas', '0004_alter_venta_id_pedido'),
     ]
@@ -15,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='venta',
             name='id_pedido',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='inventario.producto', verbose_name='ID del Pedido'),
+            field=models.PositiveIntegerField(unique=True, verbose_name='ID del Pedido'),
         ),
     ]

@@ -29,7 +29,9 @@ from inventario.views import productos, agregar_producto, editar_producto, elimi
 from proveedores.views import listar_proveedores, agregar_proveedor, editar_proveedor, eliminar_proveedor
 from administracion.views import CustomLoginView
 from proveedores.views import agregar_proveedor, editar_proveedor, eliminar_proveedor
-from ventas.views import listar_ventas, agregar_venta, editar_venta, eliminar_venta
+from ventas.views import listar_ventas, agregar_venta, editar_venta, eliminar_venta, seguimiento_venta
+from django.conf import settings
+from django.conf.urls.static import static
 from compra.views import realizar_compra
 
 urlpatterns = [
