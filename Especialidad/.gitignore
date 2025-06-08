@@ -5,6 +5,8 @@
 __pycache__
 db.sqlite3
 media
+inventario/media/boletas_facturas/
+
 
 # Backup files # 
 *.bak 
@@ -136,4 +138,3 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
-
