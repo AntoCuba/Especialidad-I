@@ -6,10 +6,18 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from administracion.models import ActivityLog
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 def listar_proveedores(request):
+    query = request.GET.get('q', '')
     proveedores = Proveedor.objects.all()
-    return render(request, 'listar_proveedores.html', {'proveedores': proveedores})
+    if query:
+        proveedores = proveedores.filter(
+            Q(nombre__icontains=query) |
+            Q(producto__icontains=query) |
+            Q(descripcion__icontains=query)
+        ).distinct()
+    return render(request, 'listar_proveedores.html', {'proveedores': proveedores, 'search_query': query})
 
 @csrf_exempt
 def agregar_proveedor(request):

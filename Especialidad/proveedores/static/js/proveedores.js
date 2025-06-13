@@ -72,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    var searchInput = document.getElementById('searchInputProveedores');
-    var table = document.getElementById('tablaProveedores');
+    var searchInput = document.getElementById('searchInput');
+    var table = document.getElementById('myTable');
     if (table) {
         var tbody = table.getElementsByTagName('tbody')[0];
         if (searchInput && tbody) {
@@ -96,15 +96,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Allow only digits and "-" in tiempo de envio inputs, no suffix added
     function setupTiempoEnvioInput(inputId) {
         var input = document.getElementById(inputId);
         if (!input) return;
 
         input.addEventListener('input', function (e) {
             var value = input.value;
-
-            // Remove characters other than digits and "-"
             value = value.replace(/[^0-9\-]/g, '');
 
             input.value = value;

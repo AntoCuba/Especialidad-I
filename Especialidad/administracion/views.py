@@ -7,7 +7,7 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm, EmailAuthentica
 from django.http import JsonResponse, HttpResponseForbidden
 from inventario.models import Producto, ProductoTalla
 from proveedores.models import Proveedor
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.utils.timezone import localtime, now
 from ventas.models import Venta
 from django.db.models.functions import ExtractMonth
@@ -137,7 +137,7 @@ def dashboard(request):
         .exclude(estado_envio='cancelado')
         .annotate(month=ExtractMonth('fecha_compra'))
         .values('month')
-        .annotate(total=Sum('monto_total'))
+        .annotate(total=Count('id'))
         .order_by('month')
     )
     ventas_mensuales = [0] * 12
